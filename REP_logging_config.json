@@ -1,0 +1,67 @@
+{
+    "version": 1,
+    "disable_existing_loggers": false,
+    "formatters": {
+        "simple": {
+            "format": "%(asctime)s - %(name)s - %(message)s"
+        }
+    },
+
+    "handlers": {
+        "console": {
+            "class": "logging.StreamHandler",
+            "level": "DEBUG",
+            "formatter": "simple",
+            "stream": "ext://sys.stdout"
+        },
+
+        "caster_server_info_file_handler": {
+          "class": "logging.handlers.RotatingFileHandler",
+            "level": "INFO",
+            "formatter": "simple",
+            "filename": "./caster_server.log",
+            "maxBytes": 10485760,
+            "backupCount": 20,
+            "mode": "a",
+            "encoding": "utf8"
+        },
+        
+        "rtcm3_capture_info_file_handler": {
+          "class": "logging.handlers.RotatingFileHandler",
+            "level": "INFO",
+            "formatter": "simple",
+            "filename": "./rtcm3_capture.log",
+            "maxBytes": 10485760,
+            "backupCount": 20,
+            "mode": "a",
+            "encoding": "utf8"
+        }
+    },
+
+    "loggers": {
+        "my_module": {
+            "level": "ERROR",
+            "handlers": ["console"],
+            "propagate": "False"
+        },
+        
+        "CasterServer": {
+          "level": "INFO",
+          "handlers": ["caster_server_info_file_handler"],
+          "propagate": "False"
+        },
+        
+        "RTCM3Capture": {
+          "level": "INFO",
+          "handlers": ["rtcm3_capture_info_file_handler"],
+          "propagate": "False"
+        }
+    },
+
+    "root": {
+        "level": "INFO",
+        "handlers": ["console"]
+    }    
+}
+
+

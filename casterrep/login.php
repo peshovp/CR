@@ -1,0 +1,95 @@
+<?php
+  // Always start this first
+  session_start();
+  if ( isset( $_SESSION['username'] ) ) {
+      // Grab user data from the database using the user_id
+      // Let them access the "logged in only" pages
+      header("Location: ./index.php");
+  }
+
+	//Librería necesaria para conectar con mongo
+	require_once __DIR__ . "/vendor/autoload.php";
+	include 'conf.php';
+	
+	$cliente=new MongoDB\Client($conf);
+	
+	//Conexión con mongo a las coleciones seleccionadas
+	$streams = $cliente->casterrep->streams;
+	$rover_connections = $cliente->casterrep->rover_connections;
+	$users = $cliente->casterrep->users;
+?>
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="./favicon.ico">
+
+    <title>Caster REP - Sign In Page</title>
+    <!-- Bootstrap core CSS -->
+    <link href="./vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Noty JS -->
+    <link href="./vendor/noty/lib/noty.css" rel="stylesheet">
+    <link href="./vendor/noty/lib/themes/mint.css" rel="stylesheet">
+    <script src="./vendor/noty/lib/noty.js" type="text/javascript"></script>
+    <!-- Custom styles for this template -->
+    <link href="./css/signin.css" rel="stylesheet">
+  </head>
+
+  <body class="text-center">
+      <form class="form-signin" action="login.php" method="POST">
+        <img class=logo src="./img/logo200px.png" alt="Logo image" width="200" height="200">
+        <img class=logoletter src="./img/logo_navbar_letter.png" alt="Logo letters"  width="300" height="60">
+        <!--<h4 class="h5 mb-3 font-weight-normal">Please sign in</h4>-->
+        <label for="inputUser" class="sr-only">Username</label>
+        <input type="text" id="inputUser" class="form-control" placeholder="Username" name="username" required autofocus>
+        <label for="inputPassword" class="sr-only">Password</label>
+        <input type="password" id="inputPassword" class="form-control" placeholder="Password" name="password" required>
+        <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit">Sign in</button><br><br>
+        <p class="text-muted font-weight-bold">Caster REP 2.0 2018</p>
+        <p class="text-muted">GNU GPL3 License</p>
+        <img class="" src="./img/GPL3.png" alt="" width="110" height="45">
+      </form>
+      <script>
+        function showNotification(type, text) {
+          new Noty({
+                  theme: 'mint',
+                  type: type, /*alert, information, error, warning, notification, success*/
+                  text: text,
+                  timeout: 3000,
+                  layout: "topCenter",
+                }).show();
+        };
+      </script>
+  </body>
+</html>
+
+<?php
+	// Check correct username. If ok, store at cache
+  if  ($_SERVER['REQUEST_METHOD'] === 'POST') {
+      if (count($_POST)>0) {
+          $token=base64_encode("".$_POST['username'].":".$_POST['password']."");
+          $datos = $users->findOne(array('username' => $_POST['username'],
+                          'token_auth' => $token)
+                      );
+          if ($datos['username']==$_POST['username'] && $datos['token_auth'] == base64_encode("".$_POST['username'].":".$_POST['password']."") && count($_POST)>0 && $datos['type']==0) {
+              //echo "<script>localStorage.setItem('username', '".$datos['username']."');</script>";
+              //echo "<script>localStorage.setItem('token_auth', '".$token."');</script>";
+              
+              // set $_SESSION
+              $_SESSION['username'] = $datos['username'];
+              
+              
+              echo"<script>showNotification(\"success\", \"Signed in successfully\");showNotification(\"information\", \"Loading administration panel\");setTimeout(function () {location.href='./index.php';}, 1000);</script>";
+
+          }else{
+            echo"<script>showNotification(\"error\", \"ERROR: Credentials are not valid\");</script>";
+          }
+      } else {
+          echo"<script>showNotification(\"error\", \"Please, sign in properly\");</script>";
+      } 
+  }
+?>

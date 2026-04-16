@@ -1,0 +1,39 @@
+#Es un fichero que da el tipo de variable que es cada variable del conf.ini Esto si lo han metido ellos
+
+[SETTINGS]
+[[ENVIRONMENT]]
+STR_PYTHON_VERSION=string
+DIR_OUTPUT=string
+[[CORE FILES]]
+FILE_MONGODB_CREATE_USER = string
+FILE_MONGODB_INIT = string
+FILE_NTRIP_CLIENT=string
+FILE_NTRIP_CASTER=string
+FILE_RTCM3_DECODE=string
+[[MONGODB]]
+DIR_BACKUP=string
+DIR_TEMP_RESTORE=string
+HOST_MONGODB=string
+PORT_MONGODB=integer
+[[PREFERENCES]]
+TIME_OUT_RAWDATA=integer
+STR_NEAREST_MOUNPOINT=string
+TIME_REFRESH_MSG=integer
+TIME_REFRESH_STATUS=integer
+TIME_EXECUTION_DELAY=integer
+
+[PROFILE]
+[[IO]]
+RTCM_CAPTURE_SERVER_HOST=string
+RTCM_CAPTURE_SERVER_PORT=integer
+CASTER_SERVER_HOST=string
+CASTER_SERVER_PORT=integer
+[[DATABASE]]
+STR_MONGODB_AUTH_USER=string
+STR_MONGODB_AUTH_PASSWD=string
+str_db_Name=string
+str_db_UsersTable=string
+str_db_RTCMTable=string
+str_db_StreamsTable=string
+str_db_CommTable=string
+str_db_RoverConnections=string

@@ -1,0 +1,156 @@
+.map {
+    height: 500px;
+    width: 100%;
+}
+
+.ol-attribution{
+    bottom: 0.5em;
+     color: white;
+     padding-top: 0 !important;
+     height: auto !important;
+ 
+ }
+ .ol-attribution ul{
+     font-size:11px !important;
+ 
+ }
+
+ .ol-popup {
+    background-color: #E6E9ED;
+    position: absolute;
+    -webkit-filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+    filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.2));
+    padding: 5px;
+    border-radius: 10px;
+    border: 1px solid #cccccc;
+    bottom: 12px;
+    left: -50px;
+}
+.ol-popup:after,
+.ol-popup:before {
+    top: 100%;
+    border: solid transparent;
+    content: " ";
+    height: 0;
+    width: 0;
+    position: absolute;
+    pointer-events: none;
+}
+
+/* Crear la felcha inferior que une el marker con el popup, 
+para saber de qué mountpoint es el popup */
+.ol-popup:after {
+    border-top-color: #E6E9ED;
+    border-width: 10px;
+    left: 48px;
+    margin-left: -10px;
+}
+.ol-popup:before {
+    border-top-color: #cccccc;
+    border-width: 11px;
+    left: 48px;
+    margin-left: -11px;
+}
+
+
+/* Estilo personalizado para el panel que se crea dentro del popup */
+.panel-mapa-popup {
+    width: 250px; /* ancho del popup! */
+    margin-bottom: 5px;
+}
+.panel-mapa-popup .panel-body {
+    border-left: 1px solid #337ab7;
+    border-right: 1px solid #337ab7;
+    border-bottom: 1px solid #337ab7;
+}
+.panel-mapa-popup .panel-heading { background: #143049;}
+
+.panel-mapa-popup .panel-heading .label {
+    font-size: 10px;
+    margin-right: 10px;
+    margin-left: 10px;
+    margin-top: 2px;
+    padding: 3px;
+    background-color: white;
+    color: black;
+    border: 2px solid white;
+}
+.panel-mapa-popup .panel-heading .label.false {
+    font-size: 10px;
+    margin-right: 10px;
+    margin-left: 10px;
+    margin-top: 2px;
+    padding: 3px;
+    background-color: #ff0033;
+    color: black;
+    border: 2px solid white;
+}
+.panel-mapa-popup .panel-heading .label.true {
+    font-size: 10px;
+    margin-right: 10px;
+    margin-left: 10px;
+    margin-top: 2px;
+    padding: 3px;
+    background-color: #00cc66;
+    color: black;
+    border: 2px solid white;
+}
+
+.panel-mapa-popup .panel-heading { padding: 2px;}
+.panel-mapa-popup h3 {margin-bottom: 0;}
+.panel-mapa-popup .panel-heading .fa-user{margin: 2px 10px 2px 10px; font-size:20px; }
+.panel-mapa-popup .panel-heading .fa-tasks{margin: 2px 10px 2px 10px; font-size:20px; }
+.panel-mapa-popup .panel-heading .fa-glass{margin: 2px 10px 2px 10px; font-size:20px; }
+.panel-mapa-popup .panel-title {
+    color: #FFF;
+    font-size: 18px;
+}
+.panel-mapa-popup .panel-body { padding:3px; }
+.panel-mapa-popup .progress {margin-bottom: 0}
+.panel-mapa-popup .table.progress-bar {
+    margin-top: 1px;
+    font-size: 9px;
+}
+.panel-mapa-popup .table i.fa { font-size: 19px; }
+.panel-mapa-popup .fa-map-marker {  margin-left: 4px; }
+.panel-mapa-popup .progress-bar.gps { background-color: #4A89DC; }
+.panel-mapa-popup .progress-bar.glo { background-color: #3BAFDA; }
+.panel-mapa-popup .progress-bar.gal { background-color: #673AB7; }
+.panel-mapa-popup .progress-bar.bds { background-color: #9575CD; }
+.panel-mapa-popup .progress-bar.gps.e0, .panel-mapa-popup .progress-bar.gps.e2, .panel-mapa-popup .progress-bar.gps.e3 { 
+  background-color: #D8D8D8 !important;
+  color: #8f8f8f;
+ }
+.panel-mapa-popup .progress-bar.glo.e0, .panel-mapa-popup .progress-bar.glo.e2, .panel-mapa-popup .progress-bar.glo.e3 { 
+  background-color: #C0C0C0 !important; 
+  color: #8f8f8f;
+}
+.panel-mapa-popup .progress-bar.gal.e0, .panel-mapa-popup .progress-bar.gal.e2, .panel-mapa-popup .progress-bar.gal.e3 { 
+  background-color: #D8D8D8 !important;
+  color: #8f8f8f;
+ }
+.panel-mapa-popup .progress-bar.bds.e0, .panel-mapa-popup .progress-bar.bds.e2, .panel-mapa-popup .progress-bar.bds.e3 { 
+  background-color: #C0C0C0 !important; 
+  color: #8f8f8f;
+}
+
+.panel-mapa-popup .table { margin-bottom: 0; }
+.panel-mapa-popup .table.borderless td { 
+  border: none !important; 
+  padding: 1px 2px;
+}
+
+.panel-mapa-popup td.title-info {
+    background-color: #eaf1f7 !important; 
+    color: #000; /* DDDDDD*/
+    text-align:left; 
+    vertical-align:middle;
+}
+.panel-mapa-popup td.title-info spam {
+    background-color: #286192 !important; 
+    color: #FFF; /* DDDDDD*/
+    text-align:center; 
+    vertical-align:middle;
+    padding: 3px 15px;
+}
+

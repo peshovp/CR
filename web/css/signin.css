@@ -10,7 +10,7 @@ body {
   align-items: center;
   padding-top: 40px;
   padding-bottom: 40px;
-  background-color: #f5f5f5;
+  background-color: #ecf0f1;
 }
 
 .form-signin {
@@ -53,7 +53,7 @@ body {
 }
 
 .btn.btn-signin {
-  background-color: #6171a2; 
+  background-color: #1a5276; 
   padding: 0px;
   font-weight: 700;
   font-size: 14px;
@@ -71,5 +71,5 @@ body {
 .btn.btn-signin:hover,
 .btn.btn-signin:active,
 .btn.btn-signin:focus {
-  background-color: #1a1f3d;
+  background-color: #154360;
 }

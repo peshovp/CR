@@ -25,8 +25,7 @@
         if (count($_POST) > 0) {
             $username = isset($_POST['username'])?$_POST['username']:null;
             $password = isset($_POST['password'])?$_POST['password']:null;
-            $token = $username.":".$password;
-            $token_auth = base64_encode($token);
+            $password_hash = $password ? password_hash($password, PASSWORD_BCRYPT) : null;
             $firstname = isset($_POST['firstname'])?$_POST['firstname']:null;
             $lastname = isset($_POST['lastname'])?$_POST['lastname']:null;
             $organisation = isset($_POST['organisation'])?$_POST['organisation']:null;
@@ -272,7 +271,7 @@
                                 'email' => $email,
                                 'description' => $description,
                                 'username' => $username,
-                                'token_auth' => $token_auth,
+                                'password_hash' => $password_hash,
                                 'valid_from' => $timestamp,
                                 'type' => floatval('1'),
                                 'active' => true

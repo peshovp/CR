@@ -26,8 +26,6 @@
             $id = isset($_POST['id'])?$_POST['id']:null;
             $username = isset($_POST['username'])?$_POST['username']:null;
             $newpassword = isset($_POST['newpassword'])?$_POST['newpassword']:null;
-            $token = $username.":".$newpassword;
-            $token_auth = base64_encode($token);
             $firstname = isset($_POST['firstname'])?$_POST['firstname']:null;
             $lastname = isset($_POST['lastname'])?$_POST['lastname']:null;
             $organisation = isset($_POST['organisation'])?$_POST['organisation']:null;
@@ -293,8 +291,7 @@
 
                         if ( $newpassword != "" && $newpassword != null) {
                             
-                            $token = $username.":".$newpassword;
-                            $token_auth = base64_encode($token);
+                            $password_hash = password_hash($newpassword, PASSWORD_BCRYPT);
                             
                             $modify = $users -> updateOne(
                                 ['_id' => new MongoDB\BSON\ObjectID($id)],
@@ -309,7 +306,10 @@
                                     'email' => $email,
                                     'description' => $description,
                                     'username' => $username,
-                                    'token_auth' => $token_auth
+                                    'password_hash' => $password_hash
+                                        ],
+                                 '$unset'=>[
+                                    'token_auth' => ''
                                         ]
                                 ]
                             );

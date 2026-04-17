@@ -60,6 +60,7 @@ import platform
 import codecs
 import time
 import base64
+import bcrypt
 import datetime
 import os
 import sys
@@ -114,42 +115,60 @@ def checkMountpointInDatabase(mountp, logger):
         return valid
 
 def checkAuth(input_token, logger):
+    """Verify NTRIP client credentials from Base64 Authorization header.
+
+    Decodes the Base64 token to extract username:password, then verifies
+    against bcrypt password_hash in MongoDB. Supports backward-compatible
+    migration from legacy base64 token_auth field.
+
+    Returns (True, username) on success, (False, None) on failure.
+    """
     valid_auth = False
+    username = None
+    dbClient = None
     try:
+        # Decode Base64 Authorization header to get username:password
+        token = base64.b64decode(input_token)
+        value = token.decode('utf-8')
+        parts = value.split(':', 1)
+        if len(parts) != 2:
+            return False, None
+        username = parts[0]
+        password = parts[1].strip()
+
         dbClient = createMongoClient()
         db = dbClient[conf['PROFILE']['DATABASE']['str_db_Name']]
         db_users = db[conf['PROFILE']['DATABASE']['str_db_UsersTable']]
-        user = db_users.find_one({'token_auth': input_token})
-        if user == None:
-            valid_auth = False
-        else:
-            valid_auth = True
 
-        if valid_auth:
-            user_bd = user['username']
-            end_user_pass = input_token.find("=")
-            if python_ver==2:
-               user_pass = base64.urlsafe_b64decode(input_token[:end_user_pass] + '=' * (4 - len(input_token) % 4))
-               temp1 = user_pass.split(":")
-               user_input = temp1[0]
-            if python_ver==3:
-               token = base64.b64decode(input_token)
-               value=token.decode('utf-8')
-               value=value.split(':')
-               user_input = value[0]
-               value=(value[1].rsplit())
-            if user_input == user_bd:
+        user = db_users.find_one({'username': username, 'active': True})
+        if user is None:
+            return False, None
+
+        # Primary: bcrypt verification
+        if 'password_hash' in user and user['password_hash']:
+            if bcrypt.checkpw(password.encode('utf-8'), user['password_hash'].encode('utf-8')):
                 valid_auth = True
-            else:
-                valid_auth = False
+        # Backward compatibility: legacy base64 token_auth
+        elif 'token_auth' in user and user['token_auth']:
+            if user['token_auth'] == input_token:
+                valid_auth = True
+                # Migrate to bcrypt
+                new_hash = bcrypt.hashpw(password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
+                db_users.update_one(
+                    {'_id': user['_id']},
+                    {'$set': {'password_hash': new_hash}, '$unset': {'token_auth': ''}}
+                )
+                logger.info(f"Migrated user '{username}' from token_auth to bcrypt")
 
+    except (ValueError, UnicodeDecodeError, KeyError) as e:
+        logger.error(f"Error decoding credentials: {e}", exc_info=True)
     except Exception as e:
-        logger.info("EXCEPTION decoding password: "+str(e))
-
+        logger.error(f"Error during authentication: {e}", exc_info=True)
     finally:
-        dbClient.close()
+        if dbClient:
+            dbClient.close()
         if valid_auth:
-            return True, user_input
+            return True, username
         else:
             return False, None
 

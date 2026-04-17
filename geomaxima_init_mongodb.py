@@ -36,9 +36,9 @@ if __name__ == '__main__':
 
         default_password = 'CHANGE_ME_ON_FIRST_RUN'
         default_user = 'admin'
-        # Generate token_auth with: base64(username:password)
-        import base64
-        token_auth = base64.b64encode(f"{default_user}:{default_password}".encode()).decode()
+        # Hash password with bcrypt
+        import bcrypt
+        password_hash = bcrypt.hashpw(default_password.encode('utf-8'), bcrypt.gensalt()).decode('utf-8')
 
         db_users.insert_one({
             "organisation" : "",
@@ -51,7 +51,7 @@ if __name__ == '__main__':
             "email" : "",
             "description" : "Default Admin",
             "username" : default_user,
-            "token_auth" : token_auth,
+            "password_hash" : password_hash,
             "valid_from" : time.time(),
             "type" : 0.0,
             "active" : True

@@ -71,22 +71,43 @@
 	// Check correct username. If ok, store at cache
   if  ($_SERVER['REQUEST_METHOD'] === 'POST') {
       if (count($_POST)>0) {
-          $token=base64_encode("".$_POST['username'].":".$_POST['password']."");
-          $datos = $users->findOne(array('username' => $_POST['username'],
-                          'token_auth' => $token)
-                      );
-          if ($datos['username']==$_POST['username'] && $datos['token_auth'] == base64_encode("".$_POST['username'].":".$_POST['password']."") && count($_POST)>0 && $datos['type']==0) {
-              //echo "<script>localStorage.setItem('username', '".$datos['username']."');</script>";
-              //echo "<script>localStorage.setItem('token_auth', '".$token."');</script>";
-              
-              // set $_SESSION
-              $_SESSION['username'] = $datos['username'];
-              
-              
-              echo"<script>showNotification(\"success\", \"Signed in successfully\");showNotification(\"information\", \"Loading administration panel\");setTimeout(function () {location.href='./index.php';}, 1000);</script>";
+          $input_username = $_POST['username'];
+          $input_password = $_POST['password'];
 
-          }else{
-            echo"<script>showNotification(\"error\", \"ERROR: Credentials are not valid\");</script>";
+          $datos = $users->findOne(array('username' => $input_username, 'type' => 0));
+
+          if ($datos) {
+              $authenticated = false;
+
+              // Primary: bcrypt verification
+              if (isset($datos['password_hash']) && $datos['password_hash']) {
+                  if (password_verify($input_password, $datos['password_hash'])) {
+                      $authenticated = true;
+                  }
+              // Backward compatibility: legacy base64 token_auth
+              } elseif (isset($datos['token_auth']) && $datos['token_auth']) {
+                  $legacy_token = base64_encode($input_username . ":" . $input_password);
+                  if ($datos['token_auth'] === $legacy_token) {
+                      $authenticated = true;
+                      // Migrate to bcrypt
+                      $new_hash = password_hash($input_password, PASSWORD_BCRYPT);
+                      $users->updateOne(
+                          ['_id' => $datos['_id']],
+                          ['$set' => ['password_hash' => $new_hash], '$unset' => ['token_auth' => '']]
+                      );
+                  }
+              }
+
+              if ($authenticated) {
+                  session_regenerate_id(true);
+                  $_SESSION['username'] = $datos['username'];
+
+                  echo"<script>showNotification(\"success\", \"Signed in successfully\");showNotification(\"information\", \"Loading administration panel\");setTimeout(function () {location.href='./index.php';}, 1000);</script>";
+              } else {
+                  echo"<script>showNotification(\"error\", \"ERROR: Credentials are not valid\");</script>";
+              }
+          } else {
+              echo"<script>showNotification(\"error\", \"ERROR: Credentials are not valid\");</script>";
           }
       } else {
           echo"<script>showNotification(\"error\", \"Please, sign in properly\");</script>";

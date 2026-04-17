@@ -1,7 +1,7 @@
 # -*- coding: iso-8859-1 -*-
-from REP_config_file import *
-from REP_header_printer import printCasterHeader
-from REP_RTCM3_Decode import decodeRTCM3Packet
+from geomaxima_config_file import *
+from geomaxima_header_printer import printCasterHeader
+from geomaxima_RTCM3_Decode import decodeRTCM3Packet
 
 import time  
 import platform
@@ -108,7 +108,7 @@ def createMongoClient():
     client.server_info() 
     return client
 def setup_logging(
-    default_path='REP_logging_config.json',
+    default_path='geomaxima_logging_config.json',
     default_level=logging.INFO,
     env_key='LOG_CFG'):
     path = default_path

@@ -5,9 +5,9 @@ __version__ = "v3.0.20201010"
 __license__ = "GNU General Public License (GPL-3.0-only or GPL-3.0-or-later)"
 __description__ = "Caster Server: This script captures rtcm raw data from CORS"
 
-from REP_config_file import *
-from REP_header_printer import printCasterHeader
-from REP_RTCM3_Decode import decodeRTCM3Packet
+from geomaxima_config_file import *
+from geomaxima_header_printer import printCasterHeader
+from geomaxima_RTCM3_Decode import decodeRTCM3Packet
 import time  
 import platform
 import codecs
@@ -169,7 +169,7 @@ class Server(object):
 
 
 def setup_logging(
-    default_path='REP_logging_config.json',
+    default_path='geomaxima_logging_config.json',
     default_level=logging.INFO,
     env_key='LOG_CFG'):
     path = default_path

@@ -37,11 +37,11 @@ DIR_OUTPUT = 'DATA'
 # -- CORE FILES -- #
 [[CORE FILES]]
 FILE_MONGODB_CREATE_USER = 'MongoDB_Create_USER.py'
-FILE_MONGODB_INIT = 'REP_init_mongodb.py'
+FILE_MONGODB_INIT = 'geomaxima_init_mongodb.py'
 #NTRIP Client file name
 FILE_NTRIP_CLIENT = 'NTRIP_CLIENT_IGN_ESP_6p3.py'
 #CASTER Server file name
-FILE_NTRIP_CASTER = 'REP_caster_server.py'
+FILE_NTRIP_CASTER = 'geomaxima_caster_server.py'
 #DECODER class
 FILE_RTCM3_DECODE = 'RTCM3_Decode6.py'
 

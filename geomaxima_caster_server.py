@@ -41,7 +41,7 @@ except ImportError:
            .       *       ╚═╝   ╚═╝     ╚══════╝      ╚═╝                      *
     ____________________     ~ ~    C A S T E R   3.0  ~ ~       ____________________
 
-@File: REP_caster_server.py
+@File: geomaxima_caster_server.py
 @Author: Red Extremeña de Posicionamiento (Juan Morillo, Javier Guerrero, Ruben Molina, Domingo Solomando)
 @Version: 3.0.20201010
 @Info: This script manages all clients requests to the caster
@@ -52,9 +52,9 @@ __license__ = "GNU General Public License (GPL-3.0-only or GPL-3.0-or-later)"
 __description__ = "Caster Server: This script manage all clients requests to the caster"
 
 
-from REP_header_printer import printCasterHeader
-from REP_RoverUserClass import RoverUser
-from REP_GPGGADecoder import *
+from geomaxima_header_printer import printCasterHeader
+from geomaxima_RoverUserClass import RoverUser
+from geomaxima_GPGGADecoder import *
 
 import platform
 import codecs
@@ -154,7 +154,7 @@ def checkAuth(input_token, logger):
             return False, None
 
 class CasterRequestHandler(HTTPServer.BaseHTTPRequestHandler):
-    server_version = "NTRIP_CasterREP_V2.0.20180422/1.0"
+    server_version = "NTRIP_GeoMaxima_V5.0.0/1.0"
     sys_version = ""
     logger_rh = logging.getLogger("CasterReqHandler")
     logger_rh.setLevel(logging.INFO)
@@ -441,7 +441,7 @@ patch_broken_pipe_error()
 
 
 def setup_logging(
-    default_path='REP_logging_config.json',
+    default_path='geomaxima_logging_config.json',
     default_level=logging.INFO,
     env_key='LOG_CFG'):
     

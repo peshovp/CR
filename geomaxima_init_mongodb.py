@@ -1,5 +1,5 @@
 # -*- coding: UTF-8 -*-
-from REP_header_printer_p3 import *
+from geomaxima_header_printer import *
 import os
 import sys
 import platform

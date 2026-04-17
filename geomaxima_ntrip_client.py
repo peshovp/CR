@@ -1,7 +1,7 @@
 # -*- coding: UTF-8 -*-
 from config_file import *
-from REP_header_printer_p3 import printCasterHeader
-from REP_RTCM3_Decode_p3 import decodeRTCM3Packet
+from geomaxima_header_printer import printCasterHeader
+from geomaxima_RTCM3_Decode import decodeRTCM3Packet
 import socket
 import pymongo
 import time

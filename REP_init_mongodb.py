@@ -34,22 +34,30 @@ if __name__ == '__main__':
         db_users = db[conf['PROFILE']['DATABASE']['str_db_UsersTable']]
         db_streams = db[conf['PROFILE']['DATABASE']['str_db_StreamsTable']]
 
+        default_password = 'CHANGE_ME_ON_FIRST_RUN'
+        default_user = 'admin'
+        # Generate token_auth with: base64(username:password)
+        import base64
+        token_auth = base64.b64encode(f"{default_user}:{default_password}".encode()).decode()
+
         db_users.insert_one({
-            "organisation" : "REP",
-            "first_name" : "Red",
-            "last_name" : "Extremeña de Posicionamiento",
-            "zip_code" : "06006",
-            "city" : "Badajoz",
-            "country" : "ESP",
-            "phone" : "+34600959393",
-            "email" : "rep@unex.es",
+            "organisation" : "",
+            "first_name" : "Admin",
+            "last_name" : "",
+            "zip_code" : "",
+            "city" : "",
+            "country" : "",
+            "phone" : "",
+            "email" : "",
             "description" : "Default Admin",
-            "username" : "admin",
-            "token_auth" : "YWRtaW46Y2FzdGVycmVw",
+            "username" : default_user,
+            "token_auth" : token_auth,
             "valid_from" : time.time(),
             "type" : 0.0,
             "active" : True
         })
+
+        print("WARNING: Change the default admin password immediately!")
 
         db_streams.insert_one({
             "id_station" : 0,

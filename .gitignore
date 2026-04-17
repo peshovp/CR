@@ -1,3 +1,7 @@
+# Environment & secrets
+.env
+config_file.ini
+
 # Python
 __pycache__/
 *.pyc
@@ -16,9 +20,17 @@ venv/
 # OS
 Thumbs.db
 .DS_Store
+*.swp
+*.swo
+
+# Node
+node_modules/
 
 # PHP vendor (large, use composer install)
 casterrep/vendor/
 
 # Data
 DATA/
+
+# AI context (do not commit)
+project_context.md

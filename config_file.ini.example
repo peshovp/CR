@@ -90,8 +90,8 @@ CASTER_SERVER_PORT = 2101
 
 # -- DATABASE -- #
 [[DATABASE]]
-STR_MONGODB_AUTH_USER = 'c_rep'
-STR_MONGODB_AUTH_PASSWD = '1qazxsw2'
+STR_MONGODB_AUTH_USER = 'CHANGE_ME'
+STR_MONGODB_AUTH_PASSWD = 'CHANGE_ME'
 # DataBase Name with collections
 str_db_Name = 'casterrep'
 # 'users' collection (table)

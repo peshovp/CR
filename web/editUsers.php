@@ -14,6 +14,7 @@
 	require_once __DIR__ . "/vendor/autoload.php";
 
 	include 'conf.php';
+	require_once 'csrf.php';
 	
 	$cliente=new MongoDB\Client($conf);
 
@@ -30,6 +31,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="./favicon.ico">
+    <meta name="csrf-token" content="<?php echo generateCSRFToken(); ?>">
 
     <title>GeoMaxima — Edit Users</title>
 
@@ -105,10 +107,10 @@
                                         foreach ($users as $doc) {
                                             echo "<tr>";
                                             echo "<td class=\"active\">
-                                                <button type=\"button\" class=\"btn btn-info btn-sm btn-block editdel\" id=\"".$doc['_id']."_edit\"><i class=\"fa fa-pencil\"></i> Edit</button>
+                                                <button type=\"button\" class=\"btn btn-info btn-sm btn-block editdel\" id=\"".htmlspecialchars($doc['_id'], ENT_QUOTES, 'UTF-8')."_edit\"><i class=\"fa fa-pencil\"></i> Edit</button>
                                                 <button type=\"button\" class=\"btn btn-danger btn-sm btn-block\"
                                                 data-container=\"body\" data-toggle=\"popover\" data-placement=\"right\" data-html=\"true\"
-                                                data-content=\"<button type='button' class='btn btn-warning editdel' id='".$doc['_id']."_delete'><i class='fa fa-exclamation-triangle'></i> SURE?</button>\">
+                                                data-content=\"<button type='button' class='btn btn-warning editdel' id='".htmlspecialchars($doc['_id'], ENT_QUOTES, 'UTF-8')."_delete'><i class='fa fa-exclamation-triangle'></i> SURE?</button>\">
                                                     <i class=\"fa fa-times\"></i> Delete
                                                 </button>
                                                 </td>";
@@ -117,16 +119,16 @@
                                                 } else {
                                                     echo "<td><button type=\"button\" class=\"btn btn-info btn-xs disabled\">User</button></td>";
                                             }
-                                            echo "<td>".$doc['username']."</td>";
-                                            echo "<td>".$doc['first_name']."</td>";
-                                            echo "<td>".$doc['last_name']."</td>";
-                                            echo "<td>".$doc['organisation']."</td>";
-                                            echo "<td>".$doc['email']."</td>";
-                                            echo "<td>".$doc['phone']."</td>";
-                                            echo "<td>".$doc['city']."</td>";
-                                            echo "<td>".$doc['country']."</td>";
-                                            echo "<td>".$doc['zip_code']."</td>";
-                                            echo "<td>".$doc['description']."</td>";
+                                            echo "<td>".htmlspecialchars($doc['username'], ENT_QUOTES, 'UTF-8')."</td>";
+                                            echo "<td>".htmlspecialchars($doc['first_name'], ENT_QUOTES, 'UTF-8')."</td>";
+                                            echo "<td>".htmlspecialchars($doc['last_name'], ENT_QUOTES, 'UTF-8')."</td>";
+                                            echo "<td>".htmlspecialchars($doc['organisation'], ENT_QUOTES, 'UTF-8')."</td>";
+                                            echo "<td>".htmlspecialchars($doc['email'], ENT_QUOTES, 'UTF-8')."</td>";
+                                            echo "<td>".htmlspecialchars($doc['phone'], ENT_QUOTES, 'UTF-8')."</td>";
+                                            echo "<td>".htmlspecialchars($doc['city'], ENT_QUOTES, 'UTF-8')."</td>";
+                                            echo "<td>".htmlspecialchars($doc['country'], ENT_QUOTES, 'UTF-8')."</td>";
+                                            echo "<td>".htmlspecialchars($doc['zip_code'], ENT_QUOTES, 'UTF-8')."</td>";
+                                            echo "<td>".htmlspecialchars($doc['description'], ENT_QUOTES, 'UTF-8')."</td>";
                                             echo "<td>".date("d F Y H:i:s", $doc['valid_from'])."</td>";
                                             if ($doc['active'] == true) {
                                                 echo "<td><button type=\"button\" class=\"btn btn-success btn-xs disabled\">Active</button></td>";

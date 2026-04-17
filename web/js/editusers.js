@@ -33,11 +33,12 @@ $(document).on('click', '.editdel', function (e) {
         location.href='./editUserPage.php?iduser='+id;
     }
     if (action == "delete") {
+        var csrfToken = $('meta[name="csrf-token"]').attr('content');
         $.ajax({
             dataType: "text",
             url: 'deleteUser.php',
-            type: 'GET',
-            data: {iduser: id},
+            type: 'POST',
+            data: {iduser: id, csrf_token: csrfToken},
             success: function(data){
                 if (data.localeCompare("success") == 0) {
                     showNotification("success", "Users was deleted successfully");

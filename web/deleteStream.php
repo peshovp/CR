@@ -13,11 +13,19 @@
 	require_once __DIR__ . "/vendor/autoload.php";
 
 	include 'conf.php';
+	require_once 'csrf.php';
+
+	if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+		http_response_code(405);
+		die('Method not allowed');
+	}
+
+	validateCSRFToken($_POST['csrf_token'] ?? null);
 	
 	$cliente=new MongoDB\Client($conf);
 	
 	$streams = $cliente->geomaxima->streams;
-	$deleted = $streams -> deleteOne(['_id' => new MongoDB\BSON\ObjectID($_GET['idstream']) ]);
+	$deleted = $streams -> deleteOne(['_id' => new MongoDB\BSON\ObjectID($_POST['idstream']) ]);
 
 	/* Output header */
 	header("Content-Type: text/plain");

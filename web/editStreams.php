@@ -14,10 +14,7 @@
 	require_once __DIR__ . "/vendor/autoload.php";
 
 	include 'conf.php';
-	
-	$cliente=new MongoDB\Client($conf);
-
-	//Conexión con mongo a las coleciones seleccionadas
+	require_once 'csrf.php';
     $streams = $cliente->geomaxima->streams;    
 ?>
 
@@ -30,6 +27,7 @@
     <meta name="description" content="">
     <meta name="author" content="">
     <link rel="icon" href="./favicon.ico">
+    <meta name="csrf-token" content="<?php echo generateCSRFToken(); ?>">
 
     <title>GeoMaxima — Edit Streams</title>
 
@@ -109,22 +107,22 @@
                                         foreach ($mountpoint as $doc) {
                                             echo "<tr>";
                                             echo "<td class=\"active\">
-                                                <button type=\"button\" class=\"btn btn-info btn-sm btn-block editdel\" id=\"".$doc['_id']."_edit\"><i class=\"fa fa-pencil\"></i> Edit</button>
+                                                <button type=\"button\" class=\"btn btn-info btn-sm btn-block editdel\" id=\"".htmlspecialchars($doc['_id'], ENT_QUOTES, 'UTF-8')."_edit\"><i class=\"fa fa-pencil\"></i> Edit</button>
                                                 <button type=\"button\" class=\"btn btn-danger btn-sm btn-block\"
                                                 data-container=\"body\" data-toggle=\"popover\" data-placement=\"bottom\" data-html=\"true\"
-                                                data-content=\"<button type='button' class='btn btn-warning editdel' id='".$doc['_id']."_delete'><i class='fa fa-exclamation-triangle'></i> SURE?</button>\">
+                                                data-content=\"<button type='button' class='btn btn-warning editdel' id='".htmlspecialchars($doc['_id'], ENT_QUOTES, 'UTF-8')."_delete'><i class='fa fa-exclamation-triangle'></i> SURE?</button>\">
                                                     <i class=\"fa fa-times\"></i> Delete
                                                 </button>
                                                 </td>";
-                                            echo "<td>".$doc['mountpoint']."</td>";
-                                            echo "<td>".$doc['identifier']."</td>";
-                                            echo "<td>".(strlen($doc['format_detail']) > 12 ? substr($doc['format_detail'],0,12)."..." : $doc['format_detail'])."</td>";
-                                            echo "<td>".$doc['carrier']."</td>";
-                                            echo "<td>".$doc['nav_system']."</td>";
-                                            echo "<td>".$doc['network']."</td>";
-                                            echo "<td>".$doc['country']."</td>";
-                                            echo "<td>".$doc['latitude']."</td>";
-                                            echo "<td>".$doc['longitude']."</td>";
+                                            echo "<td>".htmlspecialchars($doc['mountpoint'], ENT_QUOTES, 'UTF-8')."</td>";
+                                            echo "<td>".htmlspecialchars($doc['identifier'], ENT_QUOTES, 'UTF-8')."</td>";
+                                            echo "<td>".htmlspecialchars(strlen($doc['format_detail']) > 12 ? substr($doc['format_detail'],0,12)."..." : $doc['format_detail'], ENT_QUOTES, 'UTF-8')."</td>";
+                                            echo "<td>".htmlspecialchars($doc['carrier'], ENT_QUOTES, 'UTF-8')."</td>";
+                                            echo "<td>".htmlspecialchars($doc['nav_system'], ENT_QUOTES, 'UTF-8')."</td>";
+                                            echo "<td>".htmlspecialchars($doc['network'], ENT_QUOTES, 'UTF-8')."</td>";
+                                            echo "<td>".htmlspecialchars($doc['country'], ENT_QUOTES, 'UTF-8')."</td>";
+                                            echo "<td>".htmlspecialchars($doc['latitude'], ENT_QUOTES, 'UTF-8')."</td>";
+                                            echo "<td>".htmlspecialchars($doc['longitude'], ENT_QUOTES, 'UTF-8')."</td>";
                                             if ($doc['nmea'] == "1") {
                                                 echo "<td><button type=\"button\" class=\"btn btn-success btn-xs disabled\">Need<br>GGA</button></td>";
                                             } else {
@@ -135,9 +133,9 @@
                                             } else {
                                                 echo "<td><button type=\"button\" class=\"btn btn-warning btn-xs disabled\">Single<br>Base</button></td>";
                                             }
-                                            echo "<td>".$doc['generator']."</td>";
-                                            echo "<td>".$doc['bitrate']."</td>";
-                                            echo "<td>".$doc['id_station']."</td>";
+                                            echo "<td>".htmlspecialchars($doc['generator'], ENT_QUOTES, 'UTF-8')."</td>";
+                                            echo "<td>".htmlspecialchars($doc['bitrate'], ENT_QUOTES, 'UTF-8')."</td>";
+                                            echo "<td>".htmlspecialchars($doc['id_station'], ENT_QUOTES, 'UTF-8')."</td>";
                                             $string = str_split($doc['encoder_pwd']);
                                             echo "<td>";
                                             foreach ($string as $char) {

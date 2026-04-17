@@ -15,6 +15,7 @@
 
 	include 'conf.php';
 	include 'iso3166-1-a3.php';
+	require_once 'csrf.php';
 	
 	$cliente=new MongoDB\Client($conf);
 
@@ -126,12 +127,13 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12">
-                        <h3 class="page-header"><i class="fa fa-pencil fa-fw"></i>Edit user: <spam class="text-info"><?php echo $username;?></spam></h3>
+                        <h3 class="page-header"><i class="fa fa-pencil fa-fw"></i>Edit user: <spam class="text-info"><?php echo htmlspecialchars($username, ENT_QUOTES, 'UTF-8');?></spam></h3>
 
                         <div class="col-lg-8 col-lg-offset-2">
                             <form role="form" action="./editUserPage.php" class="form-horizontal" method="POST">
+                                <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
                                 <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="" name="id" value="<?php echo $id==null? "":$id; ?>" style="display:none">
+                                    <input type="text" class="form-control" placeholder="" name="id" value="<?php echo htmlspecialchars($id==null? "":$id, ENT_QUOTES, 'UTF-8'); ?>" style="display:none">
                                 </div>                               
                                 <div class="panel panel-primary">
                                     <div class="panel-heading">
@@ -146,12 +148,12 @@
                                                 <div class="col-lg-10 col-lg-offset-1">
                                                     <div class="form-group">
                                                         <label>Username <button type="button" class="btn btn-warning btn-xs disabled">Required</button></label>
-                                                        <input type="text" class="form-control" placeholder="Enter a NEW username" name="username" required value="<?php echo $username==null? "":$username; ?>">
+                                                        <input type="text" class="form-control" placeholder="Enter a NEW username" name="username" required value="<?php echo htmlspecialchars($username==null? "":$username, ENT_QUOTES, 'UTF-8'); ?>">
                                                         
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Change password</label>
-                                                        <input type="password" class="form-control" placeholder="Enter a NEW password to change it" name="newpassword" value="<?php echo $newpassword==null? "":$newpassword; ?>">
+                                                        <input type="password" class="form-control" placeholder="Enter a NEW password to change it" name="newpassword" value="<?php echo htmlspecialchars($newpassword==null? "":$newpassword, ENT_QUOTES, 'UTF-8'); ?>">
                                                         <p class="text-info"><strong><i class="fa fa-exclamation-triangle"></i> This will replace the current password</strong></p>
                                                     </div>
                                                 </div>
@@ -173,45 +175,45 @@
                                                 <div class="col-lg-10 col-lg-offset-1">
                                                     <div class="form-group">
                                                         <label>First Name <button type="button" class="btn btn-warning btn-xs disabled">Required</button></label>
-                                                        <input type="text" class="form-control" placeholder="First Name" name="firstname" required value="<?php echo $firstname==null? "":$firstname; ?>">
+                                                        <input type="text" class="form-control" placeholder="First Name" name="firstname" required value="<?php echo htmlspecialchars($firstname==null? "":$firstname, ENT_QUOTES, 'UTF-8'); ?>">
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Last Name</label>
-                                                        <input type="text" class="form-control" placeholder="Last Name" name="lastname" value="<?php echo $lastname==null? "":$lastname; ?>">
+                                                        <input type="text" class="form-control" placeholder="Last Name" name="lastname" value="<?php echo htmlspecialchars($lastname==null? "":$lastname, ENT_QUOTES, 'UTF-8'); ?>">
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Organisation</label>
-                                                        <input type="text" class="form-control" placeholder="Organisation" name="organisation" value="<?php echo $organisation==null? "":$organisation; ?>">
+                                                        <input type="text" class="form-control" placeholder="Organisation" name="organisation" value="<?php echo htmlspecialchars($organisation==null? "":$organisation, ENT_QUOTES, 'UTF-8'); ?>">
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Email <button type="button" class="btn btn-warning btn-xs disabled">Required</button></label>
-                                                        <input type="email" class="form-control" placeholder="Email" name="email" required value="<?php echo $email==null? "":$email; ?>">
+                                                        <input type="email" class="form-control" placeholder="Email" name="email" required value="<?php echo htmlspecialchars($email==null? "":$email, ENT_QUOTES, 'UTF-8'); ?>">
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Telephone</label>
-                                                        <input type="text" class="form-control" placeholder="Telephone" name="telephone" value="<?php echo $telephone==null? "":$telephone; ?>">
+                                                        <input type="text" class="form-control" placeholder="Telephone" name="telephone" value="<?php echo htmlspecialchars($telephone==null? "":$telephone, ENT_QUOTES, 'UTF-8'); ?>">
                                                     </div>
                                                     <div class="form-group">
                                                         <label>City</label>    
-                                                        <input type="text" class="form-control" placeholder="City" name="city" value="<?php echo $city==null? "":$city; ?>">
+                                                        <input type="text" class="form-control" placeholder="City" name="city" value="<?php echo htmlspecialchars($city==null? "":$city, ENT_QUOTES, 'UTF-8'); ?>">
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Country (<k>ISO 3166-1-alpha3</k>)</label>
                                                         <select class="form-control" name="country">
                                                             <?php
                                                                 foreach ($iso_array as $iso) {
-                                                                    echo "<option value=".$iso['code']." ".($country==$iso['code'] ? "selected" : "").">".$iso['country']." (".$iso['code'].")</option>";
+                                                                    echo "<option value=\"".htmlspecialchars($iso['code'], ENT_QUOTES, 'UTF-8')."\" ".($country==$iso['code'] ? "selected" : "").">".htmlspecialchars($iso['country'], ENT_QUOTES, 'UTF-8')." (".htmlspecialchars($iso['code'], ENT_QUOTES, 'UTF-8').")</option>";
                                                                 } 
                                                             ?>
                                                         </select>
                                                     </div>
                                                     <div class="form-group">
                                                         <label>ZIP Code</label>
-                                                        <input type="text" class="form-control" placeholder="ZIP code" name="zipcode" value="<?php echo $zipcode==null? "":$zipcode; ?>">
+                                                        <input type="text" class="form-control" placeholder="ZIP code" name="zipcode" value="<?php echo htmlspecialchars($zipcode==null? "":$zipcode, ENT_QUOTES, 'UTF-8'); ?>">
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Description</label>
-                                                        <input type="text" class="form-control" placeholder="Description" name="description" value="<?php echo $description==null? "":$description; ?>">
+                                                        <input type="text" class="form-control" placeholder="Description" name="description" value="<?php echo htmlspecialchars($description==null? "":$description, ENT_QUOTES, 'UTF-8'); ?>">
                                                     </div>
                                                 </div>
                                             </div>
@@ -274,6 +276,7 @@
 <?php
     if  ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (count($_POST) > 0) {
+            validateCSRFToken($_POST['csrf_token'] ?? null);
             try {
                 $useremailvalid = $users->findOne(array('email' => $email , '_id' => array('$ne' => new MongoDB\BSON\ObjectID($id)) ));
                 $usernamevalid = $users->findOne(array('username' => $username , '_id' => array('$ne' => new MongoDB\BSON\ObjectID($id)) ));

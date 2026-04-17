@@ -15,6 +15,7 @@
 
 	include 'conf.php';
 	include 'iso3166-1-a3.php';
+	require_once 'csrf.php';
 	
 	$cliente=new MongoDB\Client($conf);
 
@@ -107,6 +108,7 @@
 
                         <div class="col-lg-8 col-lg-offset-2">
                             <form role="form" action="./newstream.php" class="form-horizontal" method="POST">
+                                <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
                                 <div class="panel panel-primary">
                                     <div class="panel-heading">
                                         <h3>Sourcetable data</h3>
@@ -120,11 +122,11 @@
                                                 <div class="col-lg-10 col-lg-offset-1">
                                                     <div class="form-group">
                                                         <label>Mountpoint</label> <button type="button" class="btn btn-warning btn-xs disabled">Required</button>
-                                                        <input type="text" class="form-control" placeholder="Mountpoint name" name="mountpoint" value="<?php echo $mountpoint==null? "":$mountpoint; ?>" required>
+                                                        <input type="text" class="form-control" placeholder="Mountpoint name" name="mountpoint" value="<?php echo htmlspecialchars($mountpoint==null? "":$mountpoint, ENT_QUOTES, 'UTF-8'); ?>" required>
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Identifier</label> <button type="button" class="btn btn-warning btn-xs disabled">Required</button>
-                                                        <input type="text" class="form-control" placeholder="Identifier name" name="identifier" value="<?php echo $identifier==null? "":$identifier; ?>" required>
+                                                        <input type="text" class="form-control" placeholder="Identifier name" name="identifier" value="<?php echo htmlspecialchars($identifier==null? "":$identifier, ENT_QUOTES, 'UTF-8'); ?>" required>
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Format</label> <button type="button" class="btn btn-info btn-xs disabled">Default</button>
@@ -132,7 +134,7 @@
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Format Detail</label>
-                                                        <input type="text" class="form-control" placeholder="RTCM 3.1 Format Detail" name="formatdetail" value="<?php echo $formatdetail==null? "":$formatdetail; ?>">
+                                                        <input type="text" class="form-control" placeholder="RTCM 3.1 Format Detail" name="formatdetail" value="<?php echo htmlspecialchars($formatdetail==null? "":$formatdetail, ENT_QUOTES, 'UTF-8'); ?>">
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Carrier</label>
@@ -154,30 +156,30 @@
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Navigation System(s)</label>
-                                                        <input type="navsystem" class="form-control" placeholder="Navigation System, eg GPS, GPS+GLO..." name="navsystem" value="<?php echo $navsystem==null? "":$navsystem; ?>">
+                                                        <input type="navsystem" class="form-control" placeholder="Navigation System, eg GPS, GPS+GLO..." name="navsystem" value="<?php echo htmlspecialchars($navsystem==null? "":$navsystem, ENT_QUOTES, 'UTF-8'); ?>">
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Network</label>
-                                                        <input type="text" class="form-control" placeholder="Network" name="network" value="<?php echo $network==null? "":$network; ?>">
+                                                        <input type="text" class="form-control" placeholder="Network" name="network" value="<?php echo htmlspecialchars($network==null? "":$network, ENT_QUOTES, 'UTF-8'); ?>">
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Country Code (<k>ISO 3166-1-alpha3</k>)</label>
                                                         <select class="form-control" name="country">
                                                             <?php
                                                                 foreach ($iso_array as $iso) {
-                                                                    echo "<option value=".$iso['code']." ".($country==$iso['code'] ? "selected" : "").">".$iso['country']." (".$iso['code'].")</option>";
+                                                                echo "<option value=\"".htmlspecialchars($iso['code'], ENT_QUOTES, 'UTF-8')."\" ".($country==$iso['code'] ? "selected" : "").">".htmlspecialchars($iso['country'], ENT_QUOTES, 'UTF-8')." (".htmlspecialchars($iso['code'], ENT_QUOTES, 'UTF-8').")</option>";
                                                                 } 
                                                             ?>
                                                         </select>
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Latitude</label>    
-                                                        <input type="text" class="form-control" placeholder="Latitude" name="latitude" value="<?php echo $latitude==null? "":$latitude; ?>">
+                                                        <input type="text" class="form-control" placeholder="Latitude" name="latitude" value="<?php echo htmlspecialchars($latitude==null? "":$latitude, ENT_QUOTES, 'UTF-8'); ?>">
                                                     </div>
                                                     
                                                     <div class="form-group">
                                                         <label>Longitude</label>
-                                                        <input type="text" class="form-control" placeholder="Longitude" name="longitude" value="<?php echo $longitude==null? "":$longitude; ?>">
+                                                        <input type="text" class="form-control" placeholder="Longitude" name="longitude" value="<?php echo htmlspecialchars($longitude==null? "":$longitude, ENT_QUOTES, 'UTF-8'); ?>">
                                                     </div>
                                                     <div class="form-group">
                                                         <label>NMEA</label>
@@ -207,7 +209,7 @@
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Generator</label>
-                                                        <input type="text" class="form-control" placeholder="Generator" name="generator" value="<?php echo $generator==null? "":$generator; ?>">
+                                                        <input type="text" class="form-control" placeholder="Generator" name="generator" value="<?php echo htmlspecialchars($generator==null? "":$generator, ENT_QUOTES, 'UTF-8'); ?>">
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Compression</label> <button type="button" class="btn btn-info btn-xs disabled">Default</button>
@@ -250,11 +252,11 @@
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Bitrate</label>
-                                                        <input type="text" class="form-control" placeholder="Bitrate" name="bitrate" value="<?php echo $bitrate==null? "":$bitrate; ?>">
+                                                        <input type="text" class="form-control" placeholder="Bitrate" name="bitrate" value="<?php echo htmlspecialchars($bitrate==null? "":$bitrate, ENT_QUOTES, 'UTF-8'); ?>">
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Miscellaneous information</label>
-                                                        <input type="text" class="form-control" placeholder="Misc. Info, eg. null antenna" name="misc" value="<?php echo $misc==null? "":$misc; ?>">
+                                                        <input type="text" class="form-control" placeholder="Misc. Info, eg. null antenna" name="misc" value="<?php echo htmlspecialchars($misc==null? "":$misc, ENT_QUOTES, 'UTF-8'); ?>">
                                                     </div>
                                                 </div>
                                             </div>
@@ -279,11 +281,11 @@
                                                 <div class="col-lg-10 col-lg-offset-1">
                                                     <div class="form-group">
                                                         <label>ID Station</label> <button type="button" class="btn btn-warning btn-xs disabled">Required</button>
-                                                        <input type="" class="form-control" placeholder="ID Station Number" pattern="[0-9]{1,6}" name="idstation" value="<?php echo $idstation==null? "":$idstation; ?>" required>
+                                                        <input type="" class="form-control" placeholder="ID Station Number" pattern="[0-9]{1,6}" name="idstation" value="<?php echo htmlspecialchars($idstation==null? "":$idstation, ENT_QUOTES, 'UTF-8'); ?>" required>
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Encoder password</label> <button type="button" class="btn btn-warning btn-xs disabled">Required</button>
-                                                        <input type="text" class="form-control" placeholder="Encoder Password" name="encoder" value="<?php echo $encoder==null? "":$encoder; ?>" required>
+                                                        <input type="text" class="form-control" placeholder="Encoder Password" name="encoder" value="<?php echo htmlspecialchars($encoder==null? "":$encoder, ENT_QUOTES, 'UTF-8'); ?>" required>
                                                     </div>
                                                 </div>
                                             </div>
@@ -374,6 +376,7 @@
 <?php
     if  ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (count($_POST) > 0) {
+            validateCSRFToken($_POST['csrf_token'] ?? null);
             try {
 
                 $mountpointvalid = $streams->findOne(array('mountpoint' => $mountpoint));

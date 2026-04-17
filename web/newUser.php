@@ -15,6 +15,7 @@
 
 	include 'conf.php';
 	include 'iso3166-1-a3.php';
+	require_once 'csrf.php';
 	
 	$cliente=new MongoDB\Client($conf);
 
@@ -100,6 +101,7 @@
                         <h3 class="page-header"><i class="fa fa-plus-square-o fa-fw"></i> New user</h3>
                         <div class="col-lg-6 col-lg-offset-3">
                             <form role="form" action="./newuser.php" class="form-horizontal" method="POST">
+                                <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
                                 
                             <div class="panel panel-primary">
                                 <div class="panel-heading">
@@ -114,12 +116,12 @@
                                             <div class="col-lg-10 col-lg-offset-1">
                                                 <div class="form-group input-group">
                                                     <span class="input-group-addon"><i class="fa fa-user"></i></span>
-                                                    <input type="text" class="form-control" placeholder="Username" name="username" required value="<?php echo $username==null? "":$username; ?>">
+                                                    <input type="text" class="form-control" placeholder="Username" name="username" required value="<?php echo htmlspecialchars($username==null? "":$username, ENT_QUOTES, 'UTF-8'); ?>">
                                                     
                                                 </div>
                                                 <div class="form-group input-group">
                                                     <span class="input-group-addon"><i class="fa fa-key"></i></span>
-                                                    <input type="password" class="form-control" placeholder="Password" name="password" required value="<?php echo $password==null? "":$password; ?>">
+                                                    <input type="password" class="form-control" placeholder="Password" name="password" required value="<?php echo htmlspecialchars($password==null? "":$password, ENT_QUOTES, 'UTF-8'); ?>">
                                                 </div>
                                             </div>
                                         </div>
@@ -140,45 +142,45 @@
                                             <div class="col-lg-10 col-lg-offset-1">
                                                 <div class="form-group">
                                                     <label>First Name <button type="button" class="btn btn-warning btn-xs disabled">Required</button></label>
-                                                    <input type="text" class="form-control" placeholder="First Name" name="firstname" required value="<?php echo $firstname==null? "":$firstname; ?>">
+                                                    <input type="text" class="form-control" placeholder="First Name" name="firstname" required value="<?php echo htmlspecialchars($firstname==null? "":$firstname, ENT_QUOTES, 'UTF-8'); ?>">
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Last Name</label>
-                                                    <input type="text" class="form-control" placeholder="Last Name" name="lastname" value="<?php echo $lastname==null? "":$lastname; ?>">
+                                                    <input type="text" class="form-control" placeholder="Last Name" name="lastname" value="<?php echo htmlspecialchars($lastname==null? "":$lastname, ENT_QUOTES, 'UTF-8'); ?>">
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Organisation</label>
-                                                    <input type="text" class="form-control" placeholder="Organisation" name="organisation" value="<?php echo $organisation==null? "":$organisation; ?>">
+                                                    <input type="text" class="form-control" placeholder="Organisation" name="organisation" value="<?php echo htmlspecialchars($organisation==null? "":$organisation, ENT_QUOTES, 'UTF-8'); ?>">
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Email <button type="button" class="btn btn-warning btn-xs disabled">Required</button></label>
-                                                    <input type="email" class="form-control" placeholder="Email" name="email" required value="<?php echo $email==null? "":$email; ?>">
+                                                    <input type="email" class="form-control" placeholder="Email" name="email" required value="<?php echo htmlspecialchars($email==null? "":$email, ENT_QUOTES, 'UTF-8'); ?>">
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Telephone</label>
-                                                    <input type="text" class="form-control" placeholder="Telephone" name="telephone" value="<?php echo $telephone==null? "":$telephone; ?>">
+                                                    <input type="text" class="form-control" placeholder="Telephone" name="telephone" value="<?php echo htmlspecialchars($telephone==null? "":$telephone, ENT_QUOTES, 'UTF-8'); ?>">
                                                 </div>
                                                 <div class="form-group">
                                                     <label>City</label>    
-                                                    <input type="text" class="form-control" placeholder="City" name="city" value="<?php echo $city==null? "":$city; ?>">
+                                                    <input type="text" class="form-control" placeholder="City" name="city" value="<?php echo htmlspecialchars($city==null? "":$city, ENT_QUOTES, 'UTF-8'); ?>">
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Country (<k>ISO 3166-1-alpha3</k>)</label>
                                                     <select class="form-control" name="country">
                                                         <?php
                                                             foreach ($iso_array as $iso) {
-                                                                echo "<option value=".$iso['code']." ".($country==$iso['code'] ? "selected" : "").">".$iso['country']." (".$iso['code'].")</option>";
+                                                            echo "<option value=\"".htmlspecialchars($iso['code'], ENT_QUOTES, 'UTF-8')."\" ".($country==$iso['code'] ? "selected" : "").">".htmlspecialchars($iso['country'], ENT_QUOTES, 'UTF-8')." (".htmlspecialchars($iso['code'], ENT_QUOTES, 'UTF-8').")</option>";
                                                             } 
                                                         ?>
                                                     </select>
                                                 </div>
                                                 <div class="form-group">
                                                     <label>ZIP Code</label>
-                                                    <input type="text" class="form-control" placeholder="ZIP code" name="zipcode" value="<?php echo $zipcode==null? "":$zipcode; ?>">
+                                                    <input type="text" class="form-control" placeholder="ZIP code" name="zipcode" value="<?php echo htmlspecialchars($zipcode==null? "":$zipcode, ENT_QUOTES, 'UTF-8'); ?>">
                                                 </div>
                                                 <div class="form-group">
                                                     <label>Description</label>
-                                                    <input type="text" class="form-control" placeholder="Description" name="description" value="<?php echo $description==null? "":$description; ?>">
+                                                    <input type="text" class="form-control" placeholder="Description" name="description" value="<?php echo htmlspecialchars($description==null? "":$description, ENT_QUOTES, 'UTF-8'); ?>">
                                                 </div>
                                             </div>
                                         </div>
@@ -244,6 +246,7 @@
 <?php
     if  ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (count($_POST) > 0) {
+            validateCSRFToken($_POST['csrf_token'] ?? null);
             try {
 
                 $useremailvalid = $users->findOne(array('email' => $email));

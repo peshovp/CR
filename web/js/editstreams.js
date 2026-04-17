@@ -33,11 +33,12 @@ $(document).on('click', '.editdel', function (e) {
         location.href='./editStreamPage.php?idstream='+id;
     }
     if (action == "delete") {
+        var csrfToken = $('meta[name="csrf-token"]').attr('content');
         $.ajax({
             dataType: "text",
             url: 'deleteStream.php',
-            type: 'GET',
-            data: {idstream: id},
+            type: 'POST',
+            data: {idstream: id, csrf_token: csrfToken},
             success: function(data){
                 if (data.localeCompare("success") == 0) {
                     showNotification("success", "Stream was deleted successfully");

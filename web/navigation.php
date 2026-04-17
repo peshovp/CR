@@ -16,7 +16,7 @@
     <ul class="nav navbar-top-links navbar-right">
         
         <li>
-            <a href="index.php"><i class="fa fa-user fa-fw"></i> Hello <?php echo isset( $_SESSION['username'] )? $_SESSION['username'] : "&#60;username&#62;";?></a>
+            <a href="index.php"><i class="fa fa-user fa-fw"></i> Hello <?php echo isset( $_SESSION['username'] )? htmlspecialchars($_SESSION['username'], ENT_QUOTES, 'UTF-8') : "&#60;username&#62;";?></a>
             
         </li>
         <!-- Sign out -->

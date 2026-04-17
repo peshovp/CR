@@ -10,6 +10,7 @@
 	//Librería necesaria para conectar con mongo
 	require_once __DIR__ . "/vendor/autoload.php";
 	include 'conf.php';
+	require_once 'csrf.php';
 	
 	$cliente=new MongoDB\Client($conf);
 	
@@ -41,6 +42,7 @@
 
   <body class="text-center">
       <form class="form-signin" action="login.php" method="POST">
+        <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
         <img class=logo src="./img/logo200px.png" alt="Logo image" width="200" height="200">
         <img class=logoletter src="./img/logo_navbar_letter.png" alt="Logo letters"  width="300" height="60">
         <!--<h4 class="h5 mb-3 font-weight-normal">Please sign in</h4>-->
@@ -71,6 +73,7 @@
 	// Check correct username. If ok, store at cache
   if  ($_SERVER['REQUEST_METHOD'] === 'POST') {
       if (count($_POST)>0) {
+          validateCSRFToken($_POST['csrf_token'] ?? null);
           $input_username = $_POST['username'];
           $input_password = $_POST['password'];
 

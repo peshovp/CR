@@ -60,7 +60,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-    <?php echo "<meta http-equiv=\"Refresh\" content=\"".$dashboard_rate."\"; url=\"./index.php\">";?>
+    <?php echo "<meta http-equiv=\"Refresh\" content=\"".htmlspecialchars($dashboard_rate, ENT_QUOTES, 'UTF-8')."\"; url=\"./index.php\">";?>
     
     <link rel="icon" href="./favicon.ico">
 
@@ -219,7 +219,7 @@
 
                 <div class="alert alert-info alert-dismissable">
                 <button type="button" class="close" data-dismiss="alert" aria-hidden="true">×</button>
-                    <strong><i class="fa fa-info-circle"></i></strong>  The refresh rate for this page is defined in <u>conf.php</u> file under <i>$dashboard_rate</i> variable. It is defined as <?php echo $dashboard_rate;?> seconds
+                    <strong><i class="fa fa-info-circle"></i></strong>  The refresh rate for this page is defined in <u>conf.php</u> file under <i>$dashboard_rate</i> variable. It is defined as <?php echo htmlspecialchars($dashboard_rate, ENT_QUOTES, 'UTF-8');?> seconds
                 </div>
 
                 <div class="row">
@@ -259,14 +259,14 @@
                                                                 if ($doc['active']==true) {
                                                                     echo "<td>0</td>";
                                                                     echo "<td><button type=\"button\" class=\"btn btn-danger btn-xs disabled\">Not emmiting</button></td>";
-                                                                    echo "<td>".$doc['mountpoint']."</td>";
+                                                                    echo "<td>".htmlspecialchars($doc['mountpoint'], ENT_QUOTES, 'UTF-8')."</td>";
                                                                     echo "<td>0</td>";
                                                                     echo "<td>0</td>";
                                                                     echo "<td>".date("d F Y H:i:s", $mount_raw['timestamp'])."</td>";
                                                                 } else {
                                                                     echo "<td>3</td>";
                                                                     echo "<td><button type=\"button\" class=\"btn btn-warning btn-xs disabled\">Inactive</button></td>";
-                                                                    echo "<td>".$doc['mountpoint']."</td>";
+                                                                    echo "<td>".htmlspecialchars($doc['mountpoint'], ENT_QUOTES, 'UTF-8')."</td>";
                                                                     echo "<td>-</td>";
                                                                     echo "<td>-</td>";
                                                                     echo "<td>".date("d F Y H:i:s", $mount_raw['timestamp'])."</td>";
@@ -275,14 +275,14 @@
                                                                 if ($doc['active']==true) {
                                                                     echo "<td>1</td>";
                                                                     echo "<td><button type=\"button\" class=\"btn btn-success btn-xs disabled\">Emmiting</button></td>";
-                                                                    echo "<td>".$doc['mountpoint']."</td>";
-                                                                    echo "<td>".$mount_raw['n_gps']."</td>";
-                                                                    echo "<td>".$mount_raw['n_glo']."</td>";
+                                                                    echo "<td>".htmlspecialchars($doc['mountpoint'], ENT_QUOTES, 'UTF-8')."</td>";
+                                                                    echo "<td>".htmlspecialchars($mount_raw['n_gps'], ENT_QUOTES, 'UTF-8')."</td>";
+                                                                    echo "<td>".htmlspecialchars($mount_raw['n_glo'], ENT_QUOTES, 'UTF-8')."</td>";
                                                                     echo "<td>".date("d F Y H:i:s", $mount_raw['timestamp'])."</td>";
                                                                 } else {
                                                                     echo "<td>3</td>";
                                                                     echo "<td><button type=\"button\" class=\"btn btn-warning btn-xs disabled\">Inactive</button></td>";
-                                                                    echo "<td>".$doc['mountpoint']."</td>";
+                                                                    echo "<td>".htmlspecialchars($doc['mountpoint'], ENT_QUOTES, 'UTF-8')."</td>";
                                                                     echo "<td>-</td>";
                                                                     echo "<td>-</td>";
                                                                     echo "<td>".date("d F Y H:i:s", $mount_raw['timestamp'])."</td>";
@@ -291,7 +291,7 @@
                                                         } else {
                                                             echo "<td>2</td>";
                                                             echo "<td><button type=\"button\" class=\"btn btn-primary btn-xs disabled\">Solution</button></td>";
-                                                            echo "<td>".$doc['mountpoint']."</td>";
+                                                            echo "<td>".htmlspecialchars($doc['mountpoint'], ENT_QUOTES, 'UTF-8')."</td>";
                                                             echo "<td>-</td>";
                                                             echo "<td>-</td>";
                                                             echo "<td>-</td>"; 
@@ -371,32 +371,32 @@
                                             $user_conndata = $rover_connections->find(['conn_status'=>true]);
                                             foreach ($user_conndata as $dat) {
                                                 echo "<tr>";
-                                                echo "<td>".$dat['username']."</td>";
-                                                echo "<td>".$dat['conn_path']."</td>";
+                                                echo "<td>".htmlspecialchars($dat['username'], ENT_QUOTES, 'UTF-8')."</td>";
+                                                echo "<td>".htmlspecialchars($dat['conn_path'], ENT_QUOTES, 'UTF-8')."</td>";
                                                 $sats = isset($dat['sat_used']) ? $dat['sat_used'] : null;
                                                 if ($sats == null) {
                                                     echo "<td><span class=\"badge badge-pill badge-secondary\">N/A</span></td>";
                                                 } else {
-                                                    echo "<td>".$sats."</td>";
+                                                    echo "<td>".htmlspecialchars($sats, ENT_QUOTES, 'UTF-8')."</td>";
                                                 }
                                                 $quality = isset($dat['quality']) ? $dat['quality'] : null;
                                                 if ($quality == null) {
                                                     echo "<td><span class=\"badge badge-pill badge-secondary\">Not available</span></td>";
                                                 } else {
-                                                    echo "<td>".$quality."</td>";
+                                                    echo "<td>".htmlspecialchars($quality, ENT_QUOTES, 'UTF-8')."</td>";
                                                 }
                                                 $latency = isset($dat['latency']) ? $dat['latency'] : null;
                                                 if ($latency == null) {
                                                     echo "<td><span class=\"badge badge-pill badge-secondary\">Not available</span></td>";
                                                 } else {
-                                                    echo "<td>".$latency."</td>";
+                                                    echo "<td>".htmlspecialchars($latency, ENT_QUOTES, 'UTF-8')."</td>";
                                                 }
                                                 $dist_near = isset($dat['distance_near']) ? $dat['distance_near'] : null;
                                                 $ref_station = isset($dat['ref_station']) ? $dat['ref_station'] : null;
                                                 if ($ref_station == null || $dist_near == null) {
                                                     echo "<td><span class=\"badge badge-pill badge-secondary\">Not available</span></td>";
                                                 } else {
-                                                    echo "<td>".$ref_station."(".$dist_near." Km)</td>";
+                                                    echo "<td>".htmlspecialchars($ref_station, ENT_QUOTES, 'UTF-8')."(".htmlspecialchars($dist_near, ENT_QUOTES, 'UTF-8')." Km)</td>";
                                                 }
                                                 echo "<td>".date("d F Y H:i:s", $dat['login_time'])."</td>";
                                                 echo "<td>".ago($dat['last_update'])."</td>";
@@ -406,7 +406,7 @@
                                                 } else {
                                                     echo "<td><span class=\"badge badge-pill badge-info\">OK</span></td>";
                                                 }
-                                                echo "<td>".$dat['conn_ip'][0].":".$dat['conn_ip'][1]."</td>";
+                                                echo "<td>".htmlspecialchars($dat['conn_ip'][0], ENT_QUOTES, 'UTF-8').":".htmlspecialchars($dat['conn_ip'][1], ENT_QUOTES, 'UTF-8')."</td>";
                                                 echo "</tr>";
                                             }
                                         ?>    

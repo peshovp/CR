@@ -27,7 +27,7 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
         
         try:
             client = createMongoClient()
-            db = client['casterrep']  
+            db = client['geomaxima']  
             rtcm_raw = db['rtcm_raw']  
             streams = db['streams']  
         except Exception as e:
@@ -103,7 +103,7 @@ class ThreadedTCPServer(SocketServer.ThreadingMixIn, SocketServer.TCPServer):
 def createMongoClient():
     maxServSelDelay = 1  
     
-    client = pymongo.MongoClient('mongodb://'+MONGODB_AUTH_USER+':'+MONGODB_AUTH_PASSWD+'@'+MONGODB_HOST_PORT+'/casterrep?authMechanism=SCRAM-SHA-1',
+    client = pymongo.MongoClient('mongodb://'+MONGODB_AUTH_USER+':'+MONGODB_AUTH_PASSWD+'@'+MONGODB_HOST_PORT+'/geomaxima?authMechanism=SCRAM-SHA-1',
                                          serverSelectionTimeoutMS=maxServSelDelay)
     client.server_info() 
     return client
@@ -159,4 +159,4 @@ if __name__ == "__main__":
     server.server_close()
     
     main_logger.info ("Server stopped - %s:%s" % (RTCM_CAPTURE_SERVER_HOST, RTCM_CAPTURE_SERVER_PORT))
-    main_logger.info("Thanks for using Caster REP 2.0!")
+    main_logger.info("Thanks for using GeoMaxima NTRIP Caster!")

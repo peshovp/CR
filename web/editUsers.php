@@ -18,7 +18,7 @@
 	$cliente=new MongoDB\Client($conf);
 
 	//Conexión con mongo a las coleciones seleccionadas
-    $streams = $cliente->casterrep->streams;    
+    $users = $cliente->geomaxima->users;    
 ?>
 
 <!DOCTYPE html>
@@ -31,7 +31,7 @@
     <meta name="author" content="">
     <link rel="icon" href="./favicon.ico">
 
-    <title>Caster REP - Edit Streams</title>
+    <title>GeoMaxima — Edit Users</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="./vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -63,7 +63,6 @@
         <script src="https://oss.maxcdn.com/libs/respond.js/1.4.2/respond.min.js"></script>
     <![endif]-->
 
-
 </head>
 
 <body>
@@ -78,72 +77,57 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12">
-                        <h3 class="page-header"><i class="fa fa-edit fa-fw"></i> Edit streams</h3>
+                        <h3 class="page-header"><i class="fa fa-edit fa-fw"></i> Edit users</h3>
 
                         <div class="table-responsive">                      
-                            <table width="100%" cellspacing="0" class="table table-hover display nowrap" id="streams-table">
+                            <table width="100%" cellspacing="0" class="table table-hover display nowrap" id="users-table">
                                 <thead>
                                     <tr>
                                         <th class="active">Actions</th>
-                                        <th>Mountpoint</th>
-                                        <th>Identifier</th>
-                                        <th>Format Detail</th>
-                                        <th>Carrier</th>
-                                        <th>Nav. System</th>
-                                        <th>Network</th>
+                                        <th>Type</th>
+                                        <th>Username</th>
+                                        <th>First Name</th>
+                                        <th>Last Name</th>
+                                        <th>Organisation</th>
+                                        <th>Email</th>
+                                        <th>Telephone</th>
+                                        <th>City</th>
                                         <th>Country Code</th>
-                                        <th>Lat.</th>
-                                        <th>Long.</th>
-                                        <th>NMEA</th>
-                                        <th>Solution</th>
-                                        <th>Generator</th>
-                                        <th>Bitrate</th>
-                                        <th>ID Station</th>
-                                        <th>Encoder Passwd</th>
+                                        <th>ZIP Code</th>
+                                        <th>Description</th>
+                                        <th>Valid From</th>
                                         <th>Active</th>
                                     </tr>
                                 </thead>
                                 <tbody>
                                     <?php
-                                        $mountpoint = $streams->find();
-                                        foreach ($mountpoint as $doc) {
+                                        $users = $users->find();
+                                        foreach ($users as $doc) {
                                             echo "<tr>";
                                             echo "<td class=\"active\">
                                                 <button type=\"button\" class=\"btn btn-info btn-sm btn-block editdel\" id=\"".$doc['_id']."_edit\"><i class=\"fa fa-pencil\"></i> Edit</button>
                                                 <button type=\"button\" class=\"btn btn-danger btn-sm btn-block\"
-                                                data-container=\"body\" data-toggle=\"popover\" data-placement=\"bottom\" data-html=\"true\"
+                                                data-container=\"body\" data-toggle=\"popover\" data-placement=\"right\" data-html=\"true\"
                                                 data-content=\"<button type='button' class='btn btn-warning editdel' id='".$doc['_id']."_delete'><i class='fa fa-exclamation-triangle'></i> SURE?</button>\">
                                                     <i class=\"fa fa-times\"></i> Delete
                                                 </button>
                                                 </td>";
-                                            echo "<td>".$doc['mountpoint']."</td>";
-                                            echo "<td>".$doc['identifier']."</td>";
-                                            echo "<td>".(strlen($doc['format_detail']) > 12 ? substr($doc['format_detail'],0,12)."..." : $doc['format_detail'])."</td>";
-                                            echo "<td>".$doc['carrier']."</td>";
-                                            echo "<td>".$doc['nav_system']."</td>";
-                                            echo "<td>".$doc['network']."</td>";
+                                            if ($doc['type'] == 0) {
+                                                    echo "<td><button type=\"button\" class=\"btn btn-success btn-xs disabled\">Admin</button></td>";
+                                                } else {
+                                                    echo "<td><button type=\"button\" class=\"btn btn-info btn-xs disabled\">User</button></td>";
+                                            }
+                                            echo "<td>".$doc['username']."</td>";
+                                            echo "<td>".$doc['first_name']."</td>";
+                                            echo "<td>".$doc['last_name']."</td>";
+                                            echo "<td>".$doc['organisation']."</td>";
+                                            echo "<td>".$doc['email']."</td>";
+                                            echo "<td>".$doc['phone']."</td>";
+                                            echo "<td>".$doc['city']."</td>";
                                             echo "<td>".$doc['country']."</td>";
-                                            echo "<td>".$doc['latitude']."</td>";
-                                            echo "<td>".$doc['longitude']."</td>";
-                                            if ($doc['nmea'] == "1") {
-                                                echo "<td><button type=\"button\" class=\"btn btn-success btn-xs disabled\">Need<br>GGA</button></td>";
-                                            } else {
-                                                echo "<td><button type=\"button\" class=\"btn btn-danger btn-xs disabled\">Don't<br>need<br>GGA</button></td>";
-                                            }
-                                            if ($doc['solution'] == true) { 
-                                                echo "<td><button type=\"button\" class=\"btn btn-info btn-xs disabled\">Network</button></td>";
-                                            } else {
-                                                echo "<td><button type=\"button\" class=\"btn btn-warning btn-xs disabled\">Single<br>Base</button></td>";
-                                            }
-                                            echo "<td>".$doc['generator']."</td>";
-                                            echo "<td>".$doc['bitrate']."</td>";
-                                            echo "<td>".$doc['id_station']."</td>";
-                                            $string = str_split($doc['encoder_pwd']);
-                                            echo "<td>";
-                                            foreach ($string as $char) {
-                                                echo "*";
-                                            }
-                                            echo "</td>";
+                                            echo "<td>".$doc['zip_code']."</td>";
+                                            echo "<td>".$doc['description']."</td>";
+                                            echo "<td>".date("d F Y H:i:s", $doc['valid_from'])."</td>";
                                             if ($doc['active'] == true) {
                                                 echo "<td><button type=\"button\" class=\"btn btn-success btn-xs disabled\">Active</button></td>";
                                             } else {
@@ -189,7 +173,7 @@
     <script src="./js/sb-admin-2.js"></script>
 
     <!-- Custom JavaScript -->
-    <script src="./js/editstreams.js"></script>
+    <script src="./js/editusers.js"></script
 
 </body>
 

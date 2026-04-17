@@ -19,7 +19,7 @@
 	$cliente=new MongoDB\Client($conf);
 
 	//Conexión con mongo a las coleciones seleccionadas
-    $users = $cliente->casterrep->users;
+    $users = $cliente->geomaxima->users;
 
     if  ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (count($_POST) > 0) {
@@ -86,7 +86,7 @@
     <meta name="author" content="">
     <link rel="icon" href="./favicon.ico">
 
-    <title>Caster REP - Edit Users</title>
+    <title>GeoMaxima — Edit User</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="./vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">

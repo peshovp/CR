@@ -16,8 +16,8 @@
 	
 	$cliente=new MongoDB\Client($conf);
 	
-	$streams = $cliente->casterrep->streams;
-	$deleted = $streams -> deleteOne(['_id' => new MongoDB\BSON\ObjectID($_GET['idstream']) ]);
+	$users = $cliente->geomaxima->users;
+	$deleted = $users -> deleteOne(['_id' => new MongoDB\BSON\ObjectID($_GET['iduser']) ]);
 
 	/* Output header */
 	header("Content-Type: text/plain");

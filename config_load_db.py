@@ -10,7 +10,7 @@ from pymongo import MongoClient
 def Load_config():
 
         con = MongoClient('localhost',27017)
-        db = con.casterrep
+        db = con.geomaxima
  
         
         configuracion = db.conf

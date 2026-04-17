@@ -1,11 +1,11 @@
 #	GPL-3.0-only or GPL-3.0-or-later
 #	«Copyright 2019 Instituto Geografico Nacional»
-#	This file is part of caster REP.
-#	Caster REP is free software: you can redistribute it and/or modify
+#	This file is part of GeoMaxima NTRIP Caster.
+#	GeoMaxima NTRIP Caster is free software: you can redistribute it and/or modify
 #	it under the terms of the GNU General Public License as published by
 #	the Free Software Foundation, either version 3 of the License, or
 #	(at your option) any later version.
-#	Caster REP is distributed in the hope that it will be useful,
+#	GeoMaxima NTRIP Caster is distributed in the hope that it will be useful,
 #	but WITHOUT ANY WARRANTY; without even the implied warranty of
 #	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
 #	GNU General Public License for more details.
@@ -93,7 +93,7 @@ CASTER_SERVER_PORT = 2101
 STR_MONGODB_AUTH_USER = 'CHANGE_ME'
 STR_MONGODB_AUTH_PASSWD = 'CHANGE_ME'
 # DataBase Name with collections
-str_db_Name = 'casterrep'
+str_db_Name = 'geomaxima'
 # 'users' collection (table)
 str_db_UsersTable = 'users'
 # 'rtcm_raw' collection (table)

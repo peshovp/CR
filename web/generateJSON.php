@@ -2,9 +2,9 @@
 	require_once __DIR__ . "/vendor/autoload.php";
 	include 'conf.php';
 	$cliente=new MongoDB\Client($conf);
-	$rtcm_raw = $cliente->casterrep->rtcm_raw;
-	$streams = $cliente->casterrep->streams;
-	$rover_connections = $cliente->casterrep->rover_connections;
+	$rtcm_raw = $cliente->geomaxima->rtcm_raw;
+	$streams = $cliente->geomaxima->streams;
+	$rover_connections = $cliente->geomaxima->rover_connections;
 
 	// STREAMS
 	$mountpoints = $streams->find(array('solution' => false));

@@ -78,7 +78,7 @@ if __name__ == '__main__':
 	
 	try:
 		client = createMongoClient()
-		db = client['casterrep']  
+		db = client['geomaxima']  
 		rtcm_raw = db['rtcm_raw']  
 		streams = db['streams']  
 	except Exception as e:

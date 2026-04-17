@@ -18,10 +18,10 @@
 	$cliente=new MongoDB\Client($conf);
 
 	//Conexión con mongo a las coleciones seleccionadas
-	$rtcm_raw = $cliente->casterrep->rtcm_raw;
-	$rover_connections = $cliente->casterrep->rover_connections;
-    $streams = $cliente->casterrep->streams;
-    $users = $cliente->casterrep->users;
+	$rtcm_raw = $cliente->geomaxima->rtcm_raw;
+	$rover_connections = $cliente->geomaxima->rover_connections;
+    $streams = $cliente->geomaxima->streams;
+    $users = $cliente->geomaxima->users;
 
 ?>
 
@@ -35,7 +35,7 @@
     <meta name="author" content="">
     <link rel="icon" href="./favicon.ico">
 
-    <title>Caster REP - Live Map</title>
+    <title>GeoMaxima — Live Map</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="./vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">

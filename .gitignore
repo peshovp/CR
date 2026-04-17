@@ -27,7 +27,7 @@ Thumbs.db
 node_modules/
 
 # PHP vendor (large, use composer install)
-casterrep/vendor/
+web/vendor/
 
 # Data
 DATA/

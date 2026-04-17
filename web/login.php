@@ -14,9 +14,9 @@
 	$cliente=new MongoDB\Client($conf);
 	
 	//Conexión con mongo a las coleciones seleccionadas
-	$streams = $cliente->casterrep->streams;
-	$rover_connections = $cliente->casterrep->rover_connections;
-	$users = $cliente->casterrep->users;
+	$streams = $cliente->geomaxima->streams;
+	$rover_connections = $cliente->geomaxima->rover_connections;
+	$users = $cliente->geomaxima->users;
 ?>
 
 <!DOCTYPE html>
@@ -28,7 +28,7 @@
     <meta name="author" content="">
     <link rel="icon" href="./favicon.ico">
 
-    <title>Caster REP - Sign In Page</title>
+    <title>GeoMaxima NTRIP Caster - Sign In</title>
     <!-- Bootstrap core CSS -->
     <link href="./vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <!-- Noty JS -->
@@ -49,7 +49,7 @@
         <label for="inputPassword" class="sr-only">Password</label>
         <input type="password" id="inputPassword" class="form-control" placeholder="Password" name="password" required>
         <button class="btn btn-lg btn-primary btn-block btn-signin" type="submit">Sign in</button><br><br>
-        <p class="text-muted font-weight-bold">Caster REP 2.0 2018</p>
+        <p class="text-muted font-weight-bold">GeoMaxima NTRIP Caster v5.0.0</p>
         <p class="text-muted">GNU GPL3 License</p>
         <img class="" src="./img/GPL3.png" alt="" width="110" height="45">
       </form>

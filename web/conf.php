@@ -10,8 +10,8 @@
 
 	// Build connection string (support no-auth for local dev)
 	if ($user == '' && $pasw == '') {
-		$conf = "mongodb://".$ip.":".$port."/casterrep";
+		$conf = "mongodb://".$ip.":".$port."/geomaxima";
 	} else {
-		$conf = "mongodb://".$user.":".$pasw."@".$ip.":".$port."/casterrep?authMechanism=SCRAM-SHA-1";
+		$conf = "mongodb://".$user.":".$pasw."@".$ip.":".$port."/geomaxima?authMechanism=SCRAM-SHA-1";
 	}
 ?>

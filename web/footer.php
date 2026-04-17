@@ -2,11 +2,11 @@
     <div class="container">
 
       <a class="navbar-btn btn btn-info" data-container="body" data-toggle="popover" data-placement="top" data-html="true"
-        data-content="If you would had any question, suggestion or if you would find any error, please contact to: <code>rep@unex.es</code> . Thanks!">
+        data-content="If you have any question, suggestion, or find any error, please open an issue on our repository. Thanks!">
         <i class="fa fa-comments"></i> Question?
       </a>
 
-      <p class="navbar-text pull-right">GNU GPL3 License - 2018 - Caster REP v2.0.180724
+      <p class="navbar-text pull-right">&copy; 2026 GeoMaxima NTRIP Caster. Based on CasterREP (GPL-3.0).
       </p>
 
     </div>

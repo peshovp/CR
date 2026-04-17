@@ -18,11 +18,11 @@
 	
 	$cliente=new MongoDB\Client($conf);
 
-    $streams = $cliente->casterrep->streams;
+	//Conexión con mongo a las coleciones seleccionadas
+    $streams = $cliente->geomaxima->streams;
 
     if  ($_SERVER['REQUEST_METHOD'] === 'POST') {
         if (count($_POST) > 0) {
-            $id = isset($_POST['id'])?$_POST['id']:null;
             $mountpoint = isset($_POST['mountpoint'])?$_POST['mountpoint']:null;
             $identifier = isset($_POST['identifier'])?$_POST['identifier']:null;
             $formatdetail = isset($_POST['formatdetail'])?$_POST['formatdetail']:null;
@@ -41,42 +41,8 @@
             $encoder = isset($_POST['encoder'])?$_POST['encoder']:null;
             $active = isset($_POST['active'])?$_POST['active']:null;
         }
-    } else if  ($_SERVER['REQUEST_METHOD'] === 'GET') {
-        if (count($_GET) == 1) {
-            try {
-                $oid = new MongoDB\BSON\ObjectID($_GET['idstream']);
-                $stream = $streams -> findOne(['_id' => $oid ]);
-            } catch (Exception $e) {
-                $stream = null;
-            }
-            
-            if ($stream) {
-                $id = $stream['_id'];
-                $mountpoint = $stream['mountpoint'];
-                $identifier = $stream['identifier'];
-                $formatdetail = $stream['format_detail'];
-                $navsystem = $stream['nav_system'];
-                $network = $stream['network'];
-                $country = $stream['country'];
-                $latitude = $stream['latitude'];
-                $longitude = $stream['longitude'];
-                $generator = $stream['generator'];
-                $bitrate = $stream['bitrate'];
-                $misc = $stream['misc'];
-                $carrier = $stream['carrier'];
-                $nmea = $stream['nmea'];
-                $solution = $stream['solution'];
-                $idstation = $stream['id_station'];
-                $encoder = $stream['encoder_pwd'];
-                $active = $stream['active'];
-
-            } else {
-                $id = $mountpoint = $identifier = $formatdetail = $navsystem = $network = $country = $latitude = $idstation = null;
-                $longitude = $generator = $bitrate = $misc = $carrier = $nmea = $solution = $encoder = $active = null;
-            }
-        }
     } else {
-        $id = $mountpoint = $identifier = $formatdetail = $navsystem = $network = $country = $latitude = $idstation = null;
+        $mountpoint = $identifier = $formatdetail = $navsystem = $network = $country = $latitude = $idstation = null;
         $longitude = $generator = $bitrate = $misc = $carrier = $nmea = $solution = $encoder = $active = null;
     }
 
@@ -86,6 +52,7 @@
         $allrequired  = true;
     }
 ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -96,7 +63,7 @@
     <meta name="author" content="">
     <link rel="icon" href="./favicon.ico">
 
-    <title>Caster REP - Edit Streams</title>
+    <title>GeoMaxima — New Stream</title>
 
     <!-- Bootstrap Core CSS -->
     <link href="./vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
@@ -104,16 +71,16 @@
     <!-- MetisMenu CSS -->
     <link href="./vendor/metisMenu/metisMenu.min.css" rel="stylesheet">
 
-    <!-- Noty JS -->
-    <link href="./vendor/noty/lib/noty.css" rel="stylesheet">
-    <link href="./vendor/noty/lib/themes/mint.css" rel="stylesheet">
-    <script src="./vendor/noty/lib/noty.js" type="text/javascript"></script>
-
     <!-- Custom CSS -->
     <link href="./css/sb-admin-2.css" rel="stylesheet">
 
     <!-- Custom Fonts -->
     <link href="./vendor/font-awesome/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+
+    <!-- Noty JS -->
+    <link href="./vendor/noty/lib/noty.css" rel="stylesheet">
+    <link href="./vendor/noty/lib/themes/mint.css" rel="stylesheet">
+    <script src="./vendor/noty/lib/noty.js" type="text/javascript"></script>
 
     <!-- HTML5 Shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!-- WARNING: Respond.js doesn't work if you view the page via file:// -->
@@ -126,8 +93,6 @@
 
 <body>
 
-    <?php if (!$stream) echo "<script type=\"text/javascript\">location.href = './index.php';</script>";?>
-
     <div id="wrapper">
 
         <!-- Navigation -->
@@ -138,13 +103,10 @@
             <div class="container-fluid">
                 <div class="row">
                     <div class="col-lg-12">
-                        <h3 class="page-header"><i class="fa fa-pencil fa-fw"></i> Edit stream: <spam class="text-info"><?php echo $mountpoint;?></spam></h3>
+                        <h3 class="page-header"><i class="fa fa-plus-square-o fa-fw"></i> New stream</h3>
 
                         <div class="col-lg-8 col-lg-offset-2">
-                            <form role="form" action="./editStreamPage.php" class="form-horizontal" method="POST">
-                                <div class="form-group">
-                                    <input type="text" class="form-control" placeholder="" name="id" value="<?php echo $id==null? "":$id; ?>" style="display:none">
-                                </div>                               
+                            <form role="form" action="./newstream.php" class="form-horizontal" method="POST">
                                 <div class="panel panel-primary">
                                     <div class="panel-heading">
                                         <h3>Sourcetable data</h3>
@@ -163,6 +125,10 @@
                                                     <div class="form-group">
                                                         <label>Identifier</label> <button type="button" class="btn btn-warning btn-xs disabled">Required</button>
                                                         <input type="text" class="form-control" placeholder="Identifier name" name="identifier" value="<?php echo $identifier==null? "":$identifier; ?>" required>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Format</label> <button type="button" class="btn btn-info btn-xs disabled">Default</button>
+                                                        <input type="text" class="form-control" placeholder="Format Detail" name="format" value="RTCM 3.1" disabled>
                                                     </div>
                                                     <div class="form-group">
                                                         <label>Format Detail</label>
@@ -244,6 +210,45 @@
                                                         <input type="text" class="form-control" placeholder="Generator" name="generator" value="<?php echo $generator==null? "":$generator; ?>">
                                                     </div>
                                                     <div class="form-group">
+                                                        <label>Compression</label> <button type="button" class="btn btn-info btn-xs disabled">Default</button>
+                                                        <input type="text" class="form-control" placeholder="Compresion" name="compression" value="none" disabled>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <fieldset disabled> 
+                                                            <label>Authentication</label> <button type="button" class="btn btn-info btn-xs disabled">Default</button>
+                                                            <div class="radio">
+                                                                <label>
+                                                                    <input type="radio" name="authentication" id="authentication0" value="N">N = None
+                                                                </label>
+                                                            </div>
+                                                            <div class="radio">
+                                                                <label>
+                                                                    <input type="radio" name="authentication" id="authentication1" value="B" checked>B = Basic
+                                                                </label>
+                                                            </div>
+                                                            <div class="radio">
+                                                                <label>
+                                                                    <input type="radio" name="authentication" id="authentication2" value="D">D = Digest
+                                                                </label>
+                                                            </div>
+                                                        </fieldset>
+                                                    </div>
+                                                    <div class="form-group">
+                                                        <label>Fee</label> <button type="button" class="btn btn-info btn-xs disabled">Default</button>
+                                                        <fieldset disabled > 
+                                                            <div class="radio">
+                                                                <label>
+                                                                    <input type="radio" name="fee" id="fee0" value="N" checked>N = No user fee
+                                                                </label>
+                                                            </div>
+                                                            <div class="radio">
+                                                                <label>
+                                                                    <input type="radio" name="fee" id="fee1" value="Y">Y = Usage is charged
+                                                                </label>
+                                                            </div>
+                                                        </fieldset>
+                                                    </div>
+                                                    <div class="form-group">
                                                         <label>Bitrate</label>
                                                         <input type="text" class="form-control" placeholder="Bitrate" name="bitrate" value="<?php echo $bitrate==null? "":$bitrate; ?>">
                                                     </div>
@@ -314,16 +319,14 @@
                                         </div>
                                     </div>
                                 </div>
-                    
-                                <button type="submit" class="btn btn-primary btn-lg"><i class="fa fa-save"></i> Save</button>
+
+                                <button type="submit" class="btn btn-primary btn-lg">Create stream</button>
                                 <button type="reset" class="btn btn-warning pull-right">Clear</button>
                                 <br><br>
                             </form>
                         </div>
-                        <!-- /.col-lg-6 .col-lg-offset-3 (nested) -->
+                        <!-- /.col-lg-8 .col-lg-offset-2 (nested) -->
 
-
-                    
                     </div>
                     <!-- /.col-lg-12 -->
                 </div>
@@ -349,7 +352,6 @@
 
     <!-- Custom Theme JavaScript -->
     <script src="./js/sb-admin-2.js"></script>
-
     <script>
         function showNotification(type, text) {
           new Noty({
@@ -374,7 +376,7 @@
         if (count($_POST) > 0) {
             try {
 
-                $mountpointvalid = $streams -> findOne(array('mountpoint' => $mountpoint, '_id' => array('$ne' => new MongoDB\BSON\ObjectID($id)) ));
+                $mountpointvalid = $streams->findOne(array('mountpoint' => $mountpoint));
 
                 if ($mountpointvalid) {
                     echo"<script>showNotification(\"warning\", \"Mountpoint already exists\");</script>";
@@ -383,12 +385,12 @@
                     if ($allrequired == false) {
                         echo"<script>showNotification(\"warning\", \"Some fields are required. Check them!\");</script>";
                     } else {
-                        $modify = $streams -> updateOne(
-                            ['_id' => new MongoDB\BSON\ObjectID($id)],
-                            ['$set'=>[
+                        $streams->insertOne(
+                            [
                                 'id_station' => intval($idstation),
                                 'mountpoint' => $mountpoint,
                                 'identifier' => $identifier,
+                                'data_format' => 'RTCM 3.1',
                                 'format_detail' => $formatdetail,
                                 'carrier' => intval($carrier),
                                 'nav_system' => $navsystem,
@@ -399,25 +401,22 @@
                                 'nmea' => intval($nmea),
                                 'solution' => boolval($solution),
                                 'generator' => $generator,
+                                'compr_encryp' => 'none',
+                                'authentication' => 'B',
+                                'fee' => 'N',
                                 'bitrate' => intval($bitrate),
                                 'misc' => $misc,
                                 'encoder_pwd' => $encoder,
                                 'active' => boolval($active)
-                                ]
-                            ]
-                        );
+                        ]);
+                        echo"<script>showNotification(\"success\", \"Stream was created successfully\");</script>";
+                        echo"<script>showNotification(\"information\", \"Loading administration panel\");setTimeout(function () {location.href='./index.php';}, 3000);</script>";
 
-                        if ($modify -> getMatchedCount()) {
-                            echo"<script>showNotification(\"success\", \"Changes were saved successfully\");</script>";
-                            echo"<script>showNotification(\"information\", \"Loading edit streams panel\");setTimeout(function () {location.href='./editStreams.php';}, 2000);</script>";
-                        } else {
-                            echo"<script>showNotification(\"error\", \"ERROR: Stream could not be edited\");</script>";
-                        }
                     }
                 }
 
             } catch (Exception $e) {
-                echo"<script>showNotification(\"error\", \"ERROR: Stream could not be edited\");</script>";
+                echo"<script>showNotification(\"error\", \"ERROR: Stream could not be created\");</script>";
             }
         }
     }

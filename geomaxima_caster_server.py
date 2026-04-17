@@ -14,14 +14,14 @@ except ImportError:
 
     «Copyright 2020 Juan Morillo, Javier Guerrero, Ruben Molina, Domingo Solomando»
 
-    This file is part of caster REP.
+    This file is part of GeoMaxima NTRIP Caster.
 
-    Caster REP is free software: you can redistribute it and/or modify
+    GeoMaxima NTRIP Caster is free software: you can redistribute it and/or modify
     it under the terms of the GNU General Public License as published by
     the Free Software Foundation, either version 3 of the License, or
     (at your option) any later version.
 
-    Caster REP is distributed in the hope that it will be useful,
+    GeoMaxima NTRIP Caster is distributed in the hope that it will be useful,
     but WITHOUT ANY WARRANTY; without even the implied warranty of
     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
     GNU General Public License for more details.
@@ -29,7 +29,7 @@ except ImportError:
     You should have received a copy of the GNU General Public License
     along with Foobar.  If not, see <http://www.gnu.org/licenses/>.
 	
-	Contact: jmorillo@unex.es
+	Based on CasterREP (GPL-3.0) by Juan Morillo, Javier Guerrero, Ruben Molina, Domingo Solomando
 
     ________________________________________________________________________________
 
@@ -42,7 +42,7 @@ except ImportError:
     ____________________     ~ ~    C A S T E R   3.0  ~ ~       ____________________
 
 @File: geomaxima_caster_server.py
-@Author: Red Extremeña de Posicionamiento (Juan Morillo, Javier Guerrero, Ruben Molina, Domingo Solomando)
+@Author: GeoMaxima (Based on CasterREP by Juan Morillo, Javier Guerrero, Ruben Molina, Domingo Solomando)
 @Version: 3.0.20201010
 @Info: This script manages all clients requests to the caster
 '''
@@ -337,7 +337,7 @@ class CasterRequestHandler(HTTPServer.BaseHTTPRequestHandler):
                         for s in writable:
                             if (time.time()-self.last_write_time)>=30:
                                 self.logger_rh.info(str(self.client_address)+" - More than 30 second without sending nothing to user... It is alive?")
-                                s.write("Caster REP 2.0\r\n")
+                                s.write("GeoMaxima NTRIP Caster\r\n")
 
                             if self.need_GGA and not self.got_GGA:
                                 continue
@@ -515,4 +515,4 @@ if __name__ == '__main__':
     httpd.server_close()
 
     main_logger.info ("Server stopped - %s:%s" % (conf['PROFILE']['IO']['CASTER_SERVER_HOST'], conf['PROFILE']['IO']['CASTER_SERVER_PORT']))
-    main_logger.info("Thanks for using Caster REP 2.0!")
+    main_logger.info("Thanks for using GeoMaxima NTRIP Caster!")

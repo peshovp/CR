@@ -1,3 +1,4 @@
+<?php require_once 'session_check.php'; ?>
 <!-- Navigation-->
 <nav class="navbar navbar-default navbar-static-top" role="navigation" style="margin-bottom: 0">
     <div class="navbar-header">

@@ -1,5 +1,8 @@
 <?php
-  // Always start this first
+  ini_set('session.cookie_httponly', 1);
+  ini_set('session.cookie_secure', 0);  // Change to 1 when HTTPS is enabled
+  ini_set('session.use_strict_mode', 1);
+  ini_set('session.cookie_samesite', 'Strict');
   session_start();
   if ( isset( $_SESSION['username'] ) ) {
       // Grab user data from the database using the user_id
@@ -41,6 +44,11 @@
   </head>
 
   <body class="text-center">
+      <?php if (isset($_GET['timeout']) && $_GET['timeout'] == '1'): ?>
+      <div class="alert alert-warning" style="max-width: 380px; margin: 20px auto 0;">
+          <strong><i class="fa fa-clock-o"></i></strong> Session expired. Please log in again.
+      </div>
+      <?php endif; ?>
       <form class="form-signin" action="login.php" method="POST">
         <input type="hidden" name="csrf_token" value="<?php echo generateCSRFToken(); ?>">
         <img class=logo src="./img/logo200px.png" alt="Logo image" width="200" height="200">
@@ -104,6 +112,7 @@
               if ($authenticated) {
                   session_regenerate_id(true);
                   $_SESSION['username'] = $datos['username'];
+                  $_SESSION['last_activity'] = time();
 
                   echo"<script>showNotification(\"success\", \"Signed in successfully\");showNotification(\"information\", \"Loading administration panel\");setTimeout(function () {location.href='./index.php';}, 1000);</script>";
               } else {

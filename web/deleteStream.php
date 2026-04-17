@@ -1,14 +1,5 @@
 <?php
-	// Always start this first
-    session_start();
-
-    if ( isset( $_SESSION['username'] ) ) {
-        // Grab user data from the database using the user_id
-        // Let them access the "logged in only" pages
-    } else {
-        // Redirect them to the login page
-        header("Location: ./login.php");
-	}
+	require_once 'session_check.php';
 	
 	require_once __DIR__ . "/vendor/autoload.php";
 

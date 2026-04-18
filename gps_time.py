@@ -1,5 +1,8 @@
 # -*- coding: UTF-8 -*-
 import datetime
+import logging
+
+logger = logging.getLogger(__name__)
 
 def datetime_to_tow(t):
   wk_ref = datetime.datetime(2014, 2, 16, 0, 0, 0, 0, None)
@@ -70,7 +73,7 @@ class GPSTime(object):
         new_week -= 1
       return GPSTime(new_week, new_tow)
     else:
-      print ("Type of subtraced:", type(other))
+      logger.warning("Type of subtracted: %s", type(other))
       raise NotImplementedError
 
   def __add__(self, other):
@@ -82,7 +85,7 @@ class GPSTime(object):
         new_week += 1
       return GPSTime(new_week, new_tow)
     else:
-      print ("Type of added:", type(other))
+      logger.warning("Type of added: %s", type(other))
       raise NotImplementedError
 
   def __lt__(self, other):

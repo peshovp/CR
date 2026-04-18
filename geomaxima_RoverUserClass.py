@@ -1,9 +1,12 @@
 # -*- coding: UTF-8 -*-
 
+import logging
 import time
 from bson.objectid import ObjectId
 from config_load import Load_config
 from general_defs import *
+
+logger = logging.getLogger(__name__)
 
 conf=Load_config()
 
@@ -31,19 +34,19 @@ class RoverUser():
         self.newUser()
             
     def printer (self):
-        print ("_id: "+ str(self._id))
-        print ("conn_ip: "+ str(self.conn_ip))
-        print ("conn_useragent: "+ str(self.conn_useragent))
-        print ("conn_path: "+ str(self.conn_path))
-        print ("username: "+ str(self.username))
-        print ("login_time: "+ str(self.login_time))
-        print ("timestamp_last_msg: "+ str(self.timestamp_last_msg))
-        print ("distance_near: "+ str(self.distance_near))
-        print ("coordinates: "+ str(self.coordinates))
-        print ("ref_station: "+ str(self.ref_station))
-        print ("sat_used: "+ str(self.sat_used))
-        print ("nmea_msg: "+ str(self.nmea_msg))
-        print ("conn_status: "+ str(self.conn_status))
+        logger.debug("_id: %s", self._id)
+        logger.debug("conn_ip: %s", self.conn_ip)
+        logger.debug("conn_useragent: %s", self.conn_useragent)
+        logger.debug("conn_path: %s", self.conn_path)
+        logger.debug("username: %s", self.username)
+        logger.debug("login_time: %s", self.login_time)
+        logger.debug("timestamp_last_msg: %s", self.timestamp_last_msg)
+        logger.debug("distance_near: %s", self.distance_near)
+        logger.debug("coordinates: %s", self.coordinates)
+        logger.debug("ref_station: %s", self.ref_station)
+        logger.debug("sat_used: %s", self.sat_used)
+        logger.debug("nmea_msg: %s", self.nmea_msg)
+        logger.debug("conn_status: %s", self.conn_status)
             
     def newUser (self):
         dbClient = createMongoClient()

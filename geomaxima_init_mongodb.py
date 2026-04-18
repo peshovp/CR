@@ -1,5 +1,6 @@
 # -*- coding: UTF-8 -*-
 from geomaxima_header_printer import *
+import logging
 import os
 import sys
 import platform
@@ -8,28 +9,21 @@ import time
 from config_load import Load_config
 from general_defs import *
 
+logger = logging.getLogger(__name__)
+
 conf=Load_config()
 
 if __name__ == '__main__':
-    try:
-        reload(sys)
-        sys.stdout = codecs.getwriter('utf8')(sys.stdout)
-        sys.stderr = codecs.getwriter('utf8')(sys.stderr)
-        sys.setdefaultencoding('utf-8')
-
-        if (platform.system() == "Windows"):
-            cls = lambda: os.system('cls')
-            cls()
-        elif (platform.system() == "Linux"):
-            os.system("clear")
-    except Exception as e:
-        pass
+    if (platform.system() == "Windows"):
+        os.system('cls')
+    elif (platform.system() == "Linux"):
+        os.system("clear")
 
     printCasterHeader()
     
     try:
         dbClient = createMongoClient()
-        print("Se ha conectado a mongo")
+        logger.info("Connected to MongoDB")
         db = dbClient[conf['PROFILE']['DATABASE']['str_db_Name']]
         db_users = db[conf['PROFILE']['DATABASE']['str_db_UsersTable']]
         db_streams = db[conf['PROFILE']['DATABASE']['str_db_StreamsTable']]
@@ -86,6 +80,6 @@ if __name__ == '__main__':
         dbClient.close() # Close MongoDB database connection
         
     except Exception as e:
-        print ("Oops! MongoDB seems not to be active. Exiting..."+str(e))
+        logger.error("MongoDB seems not to be active. Exiting: %s", e)
         sys.exit()
 

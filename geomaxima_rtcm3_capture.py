@@ -62,40 +62,38 @@ def handle(connection, address):
             except Exception as e:
                 logger.info("ERROR receiving tcp packet...")
                 break
-            except KeyboardInterrupt:
-                break
 
             if data == "":
                 logger.info("Socket closed remotely")
                 break
 
-            if bandera == True:
-            	dataString = data.decode("ascii")
-            if dataString.find('SOURCE') > -1:
-                rcvd = dataString.replace("\r\n", " ")
-                print(rcvd)
-                bandera = False
-                dataString = ''
-                packet_splitted = rcvd.split(' ')
-                if packet_splitted[0] == "SOURCE":
-                    encoder = packet_splitted[1]
-                    mountp = packet_splitted[2].replace("/", "")
+            if bandera:
+                dataString = data.decode("ascii")
+                if 'SOURCE' in dataString:
+                    rcvd = dataString.replace("\r\n", " ")
+                    logger.debug("Received SOURCE request: %s", rcvd)
+                    bandera = False
+                    dataString = ''
+                    packet_splitted = rcvd.split(' ')
+                    if packet_splitted[0] == "SOURCE":
+                        encoder = packet_splitted[1]
+                        mountp = packet_splitted[2].replace("/", "")
 
-                    try:
-                        stream = streams.find_one({'mountpoint': mountp})
-                        if stream == None:
-                            logger.info('Mountpoint does not exist in database: ERROR - Mount Point Invalid')
-                            connection.sendall("ERROR - Mount Point Invalid\r\n")
+                        try:
+                            stream = streams.find_one({'mountpoint': mountp})
+                            if stream == None:
+                                logger.info('Mountpoint does not exist in database: ERROR - Mount Point Invalid')
+                                connection.sendall("ERROR - Mount Point Invalid\r\n")
 
-                        elif stream['active'] == False:
-                            logger.info('Mountpoint is not active in database: ERROR - Mount Point Invalid')
-                            connection.sendall("ERROR - Mount Point Invalid\r\n")
+                            elif stream['active'] == False:
+                                logger.info('Mountpoint is not active in database: ERROR - Mount Point Invalid')
+                                connection.sendall("ERROR - Mount Point Invalid\r\n")
 
-                        elif stream['encoder_pwd'] == encoder:
-                            logger.info('Enconder password is correct: ICY 200 OK')
-                            connection.sendall(b"ICY 200 OK\r\n")
-                    except Exception as e:
-                        logger.info("ERROR when manage SOURCE request: "+ str(e))
+                            elif stream['encoder_pwd'] == encoder:
+                                logger.info('Enconder password is correct: ICY 200 OK')
+                                connection.sendall(b"ICY 200 OK\r\n")
+                        except Exception as e:
+                            logger.info("ERROR when manage SOURCE request: "+ str(e))
 
             elif mountp != "":
                 id_station, n_gps, n_glo, n_gal, n_bei = decodeRTCM3Packet(data)
@@ -136,7 +134,7 @@ def handle(connection, address):
                 connection.sendall(b"Bye.\r\n")
                 break
 
-    except:
+    except Exception:
         logger.exception("Problem handling request")
     finally:
         logger.info("Closing socket")
@@ -183,31 +181,21 @@ def setup_logging(
     else:
         logging.basicConfig(level=default_level)
 
-#Comienza el código principal
+#Main code
 
 if __name__ == '__main__':
-    try:
-        reload(sys) #Indicamos que la codificacion se haga en utf-8
-        sys.stdout = codecs.getwriter('utf8')(sys.stdout)
-        sys.stderr = codecs.getwriter('utf8')(sys.stderr)
-        sys.setdefaultencoding('utf-8')
-
-        if (platform.system() == "Windows"):
-            cls = lambda: os.system('cls')
-            cls()
-        elif (platform.system() == "Linux"):
-            os.system("clear")
-
-    except Exception as e:
-        pass
-    
-    printCasterHeader()
-    print ("  - Version: "+__version__)
-    print ("  - Authors: "+__author___)
-    print ("  - License: "+__license__+"\n")
+    if (platform.system() == "Windows"):
+        os.system('cls')
+    elif (platform.system() == "Linux"):
+        os.system("clear")
     
     setup_logging()
     main_logger = logging.getLogger("RTCM3Capture")
+
+    printCasterHeader()
+    main_logger.info("Version: %s", __version__)
+    main_logger.info("Authors: %s", __author___)
+    main_logger.info("License: %s", __license__)
     main_logger.info("Starting RTCM3 Capture Server...")
     server = Server(RTCM_CAPTURE_SERVER_HOST, RTCM_CAPTURE_SERVER_PORT, main_logger)
     try:
@@ -216,7 +204,7 @@ if __name__ == '__main__':
             server.start()
         except KeyboardInterrupt:
             main_logger.info("Server stopped by Keyboard Interrupt")
-    except:
+    except Exception:
         main_logger.exception("Unexpected exception")
     finally:
         main_logger.info("Exiting...")

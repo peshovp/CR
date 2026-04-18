@@ -1,9 +1,12 @@
 # -*- coding: UTF-8 -*-
 from math import radians, cos, sin, asin, sqrt
+import logging
 import time
 
 from config_load import Load_config
 from general_defs import *
+
+logger = logging.getLogger(__name__)
 
 conf=Load_config()
 
@@ -38,7 +41,7 @@ def GPGGADecodeAndUpdateRover (nmea_gga, rover):
             longitude = - (float(int(splitted_gga[4][:3]))+lon2)
         
     except Exception as e:
-        print ("EXCEPCTION getting position coordinates from NMEA msg. Invalid msg: "+str(e))
+        logger.error("Failed to get position coordinates from NMEA message: %s", e)
     
     num_quality = splitted_gga[6]
     q = { 0: 'Invalid', 1: 'GPS Fix', 2: 'DGPS', 3: 'GPS PPS Mode', 4: 'RTK', 5: 'Float RTK', 6: 'Estimated', 7: 'Manual Input Mode', 8: 'Simulator Mode' }
@@ -116,5 +119,5 @@ def getNearestMountpoint(user_lat, user_lon):
         return distance_mountpoint_array[0]
     
     except Exception as e:
-        print ("EXCEPTION on getting nearest mountpoint: "+str(e))
+        logger.error("Failed to get nearest mountpoint: %s", e)
         return (None,None)

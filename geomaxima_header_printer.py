@@ -1,6 +1,10 @@
 # -*- coding: UTF-8 -*-
+import logging
+
+logger = logging.getLogger(__name__)
+
 def printCasterHeader():
-    print(r"""
+    logger.info(r"""
    ____            __  __            _
   / ___| ___  ___ |  \/  | __ ___  _(_)_ __ ___   __ _
  | |  _ / _ \/ _ \| |\/| |/ _` \ \/ / | '_ ` _ \ / _` |

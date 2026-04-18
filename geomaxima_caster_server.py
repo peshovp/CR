@@ -1,13 +1,7 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
-try:
-    import BaseHTTPServer as HTTPServer
-    import SocketServer
-    python_ver=2
-except ImportError:
-    import http.server as HTTPServer
-    import socketserver as SocketServer
-    python_ver=3
+import http.server as HTTPServer
+import socketserver as SocketServer
 
 '''
     GPL-3.0-only or GPL-3.0-or-later
@@ -80,9 +74,11 @@ from general_defs import *
 
 conf=Load_config()
 
+logger = logging.getLogger(__name__)
+
 def checkMountpointInDatabase(mountp, logger):
     valid = False
-    print(mountp)
+    logger.debug("Checking mountpoint: %s", mountp)
     try:
         logger.info("Checking for mountpoint request "+mountp+"...")
         dbClient = createMongoClient()
@@ -90,7 +86,7 @@ def checkMountpointInDatabase(mountp, logger):
         db_rtcm_raw = db[conf['PROFILE']['DATABASE']['str_db_RTCMTable']] #toma el documento de datos crudos
         db_streams = db[conf['PROFILE']['DATABASE']['str_db_StreamsTable']] #toma el documento de los streams
         stream = db_streams.find_one({'mountpoint': mountp})
-        print(stream)
+        logger.debug("Stream data: %s", stream)
         if stream == None:
             logger.info('ERROR - Mount Point Invalid - It does not exist on database')
             valid = False
@@ -100,10 +96,10 @@ def checkMountpointInDatabase(mountp, logger):
         elif  stream['solution'] == False:
             rtcm_raw_data = db_rtcm_raw.find_one({'mountpoint': mountp})
             if ((time.time() - rtcm_raw_data['timestamp']) > conf['SETTINGS']['PREFERENCES']['TIME_OUT_RAWDATA']):
-                print('no vale el dato')
+                logger.warning("Invalid data received")
                 valid = False
             else:
-                print('si vale el dato')
+                logger.debug("Valid data received")
                 valid = True
         else:
             valid = True
@@ -183,13 +179,13 @@ class CasterRequestHandler(HTTPServer.BaseHTTPRequestHandler):
     logger_rh.addHandler(handler)
     
     def __init__(self, request, client_address, server):
-        print('lanza el constructor')
+        self.logger_rh.debug("Initializing request handler")
         HTTPServer.BaseHTTPRequestHandler.__init__(self, request, client_address, server)
-        print('ha pasado el httpServer')
+        self.logger_rh.debug("HTTP server handler initialized")
         self.protocol_version = 'HTTP/1.0'        
 
     def do_GET(self):
-        print('Funcion do_GET')
+        self.logger_rh.debug("Processing GET request")
         self.handle_data()
 
     def do_UNAUTHORIZED(self):
@@ -197,10 +193,7 @@ class CasterRequestHandler(HTTPServer.BaseHTTPRequestHandler):
         self.send_header('WWW-Authenticate', 'Basic realm=\"None\"')
         self.send_header('Content-type', 'text/html')
         self.end_headers()
-        if python_ver==2:
-           self.wfile.write('No auth header received or not authenticated\r\n')
-        if python_ver==3:
-           self.wfile.write(bytes('No auth header received or not authenticated\r\n',"utf-8"))
+        self.wfile.write(bytes('No auth header received or not authenticated\r\n',"utf-8"))
 
     def do_SOURCETABLE(self):
         mountpoints = ''
@@ -257,10 +250,7 @@ class CasterRequestHandler(HTTPServer.BaseHTTPRequestHandler):
             connection = "Connection: Close\r\n"
             content_lenght = "Content-Length: "+str(len(mountpoints))+"\r\n\r\n"
             end = "ENDSOURCETABLE\r\n"
-            if python_ver==2:
-               self.wfile.write(status+server+date+content_type+connection+content_lenght+mountpoints+end)
-            if python_ver==3:
-               self.wfile.write(bytes(status+server+date+content_type+connection+content_lenght+mountpoints+end,"utf-8"))
+            self.wfile.write(bytes(status+server+date+content_type+connection+content_lenght+mountpoints+end,"utf-8"))
 
     def handle_data(self):
         self.logger_rh.info(str(self.client_address)+" - New client. Request "+str(self.path) + ", -Version %r,  - Header %r" % (self.request_version, self.headers.items()))
@@ -290,34 +280,25 @@ class CasterRequestHandler(HTTPServer.BaseHTTPRequestHandler):
             self.logger_rh.info(str(self.client_address)+" - Mountpoint is valid in our database")
             valid_auth = False  # Initially false
             try:
-                if python_ver==2:
-                   auth = self.headers.getheader('Authorization')
-                if python_ver==3:
-                   auth = self.headers.get('Authorization')
+                auth = self.headers.get('Authorization')
                    
                 if auth == None :
                     valid_auth = False
                 else:
-                    if auth.find('Basic')>-1:
+                    if 'Basic' in auth:
                         token_auth = auth.split(" ")[1]
                         valid_auth, username = checkAuth(token_auth, self.logger_rh)
             except Exception as e:
                 self.logger_rh.info(str(self.client_address)+" - EXCEPTION: We got an issue with the authentication: "+str(e))
             
             if valid_auth:
-                if python_ver==2:
-                   self.wfile.write("ICY 200 OK\r\n\r\n")
-                if python_ver==3:
-                   self.wfile.write(bytes("ICY 200 OK\r\n\r\n","utf-8"))
+                self.wfile.write(bytes("ICY 200 OK\r\n\r\n","utf-8"))
                 self.logger_rh.info(str(self.client_address)+" - User authentication was valid: "+username)
                 
                 ts_init = time.time()
                 self.last_write_time = ts_init
                 
-                if python_ver==2:
-                   self.rover = RoverUser(self.client_address, self.headers.getheader('User-Agent'), self.path, username, ts_init)
-                if python_ver==3:
-                   self.rover = RoverUser(self.client_address, self.headers.get('User-Agent'), self.path, username, ts_init)
+                self.rover = RoverUser(self.client_address, self.headers.get('User-Agent'), self.path, username, ts_init)
                 self.need_GGA = False
                 self.got_GGA = False
                 
@@ -331,10 +312,7 @@ class CasterRequestHandler(HTTPServer.BaseHTTPRequestHandler):
                     
                     if elapsed > 5.0 and self.need_GGA == True and self.got_GGA == False:
                         self.logger_rh.info(str(self.client_address)+" - Rover user "+str(username)+" rejected. No GPGGA message received. Access denied.")
-                        if python_ver==2:
-                           self.wfile.write('No GPGGA message received. Access denied.')
-                        if python_ver==3:
-                           self.wfile.write(bytes('No GPGGA message received. Access denied.',"utf-8"))
+                        self.wfile.write(bytes('No GPGGA message received. Access denied.',"utf-8"))
                         break
                     try:
                         readable, writable, exceptional = select.select(
@@ -342,12 +320,12 @@ class CasterRequestHandler(HTTPServer.BaseHTTPRequestHandler):
 
                         for s in readable:  
                             self.data = None
-                            print(s)
+                            self.logger_rh.debug("Readable socket: %s", s)
                             self.data = s.readline()
-                            print(self.data)
+                            self.logger_rh.debug("Data from user: %s", self.data)
                             if self.data:
                                 self.logger_rh.info(str(self.client_address)+" - Message got from user: "+str(self.data.strip()))
-                                if self.data.find(b'GGA') > -1:
+                                if b'GGA' in self.data:
                                     self.got_GGA = True
                                     self.nmea = self.data
                                     self.rover = GPGGADecodeAndUpdateRover(self.nmea, self.rover)
@@ -366,9 +344,9 @@ class CasterRequestHandler(HTTPServer.BaseHTTPRequestHandler):
                                         self.stream_data = self.db_rtcm_raw.find_one({'mountpoint': self.path})
                                     else:
                                         if self.rover.ref_station != None:
-                                            print(self.rover.ref_station)
+                                            self.logger_rh.debug("Nearest ref station: %s", self.rover.ref_station)
                                             self.stream_data = self.db_rtcm_raw.find_one({'mountpoint': self.rover.ref_station})
-                                            print(self.stream_data)
+                                            self.logger_rh.debug("Stream data: %s", self.stream_data)
                                 except Exception as e:
                                     self.logger_rh.info(str(self.client_address)+" - ERROR getting RTCM data from source: "+str(e))
                             
@@ -380,7 +358,7 @@ class CasterRequestHandler(HTTPServer.BaseHTTPRequestHandler):
                                         self.logger_rh.info(str(self.client_address)+" - Stream data outdated!! It seems no data available from source. Is it disconnected?")
                                         pass
                                     else:
-                                        print(self.stream_data["data"])
+                                        self.logger_rh.debug("Sending RTCM data to rover")
                                         s.write(self.stream_data["data"])
                                         try:
                                             self.db_rover_conn.update_one({'_id': self.rover._id },{"$set": {'timestamp_last_msg': ts, 'last_update':ts}})
@@ -413,7 +391,7 @@ class CasterRequestHandler(HTTPServer.BaseHTTPRequestHandler):
     def finish(self,*args,**kw):
         try:
             self.logger_rh.info(str(self.client_address)+" - Closing connection with client...")
-        except:
+        except Exception:
             pass
         try:
             if not self.wfile.closed:
@@ -433,10 +411,7 @@ class CasterServer(SocketServer.ThreadingMixIn,
 
 
 def patch_broken_pipe_error():
-    if python_ver==2:
-       from SocketServer import BaseServer
-    if python_ver==3:
-       from socketserver import BaseServer
+    from socketserver import BaseServer
     from wsgiref import handlers
 
     handle_error = BaseServer.handle_error
@@ -475,29 +450,20 @@ def setup_logging(
     else:
         logging.basicConfig(level=default_level)
 
-#aquí comienza el codigo principal
+#Main code
 if __name__ == '__main__':
-    try:
-        reload(sys)
-        sys.stdout = codecs.getwriter('utf8')(sys.stdout)
-        sys.stderr = codecs.getwriter('utf8')(sys.stderr)
-        sys.setdefaultencoding('utf-8')
-
-        if (platform.system() == "Windows"):
-            cls = lambda: os.system('cls')
-            cls()
-        elif (platform.system() == "Linux"):
-            os.system("clear")
-    except Exception as e:
-        pass
+    if (platform.system() == "Windows"):
+        os.system('cls')
+    elif (platform.system() == "Linux"):
+        os.system("clear")
 
     setup_logging()
-    printCasterHeader()
-    print ("  - Version: "+__version__)
-    print ("  - Authors: "+__author___)
-    print ("  - License: "+__license__+"\n")
 
+    printCasterHeader()
     main_logger = logging.getLogger("CasterServer")
+    main_logger.info("Version: %s", __version__)
+    main_logger.info("Authors: %s", __author___)
+    main_logger.info("License: %s", __license__)
     main_logger.info("Starting Caster Server...")
     
     main_logger.info("Trying to connect to MongoDB")

@@ -2,6 +2,7 @@
 from config_file import *
 from geomaxima_header_printer import printCasterHeader
 from geomaxima_RTCM3_Decode import decodeRTCM3Packet
+import logging
 import socket
 import pymongo
 import time
@@ -13,6 +14,8 @@ import codecs
 import os
 import platform
 import datetime
+
+logger = logging.getLogger(__name__)
 num_gps=0
 num_glo=0
 num_gal=0
@@ -29,19 +32,10 @@ def createMongoClient():
 	client.server_info() 
 	return client
 if __name__ == '__main__':
-	try:
-		reload(sys)
-		sys.stdout = codecs.getwriter('utf8')(sys.stdout)
-		sys.stderr = codecs.getwriter('utf8')(sys.stderr)
-		sys.setdefaultencoding('utf-8') 
-		
-		if (platform.system() == "Windows"):
-			cls = lambda: os.system('cls')
-			cls()
-		elif (platform.system() == "Linux"):
-			os.system("clear") 
-	except Exception as e:
-		pass
+	if (platform.system() == "Windows"):
+		os.system('cls')
+	elif (platform.system() == "Linux"):
+		os.system("clear")
 	
 	printCasterHeader() 
 	
@@ -111,7 +105,7 @@ if __name__ == '__main__':
 					
 					data = s.recv(16000)
 					
-					if (data.find("Unauthorized"))!=-1:
+					if "Unauthorized" in data:
 						break
 					
 					decod = decodeRTCM3Packet(data)
@@ -143,7 +137,7 @@ if __name__ == '__main__':
 						},upsert=True)
 					
 				except Exception as e:
-					print ("Exception getting data from socket: "+str(e))
+					logger.error("Exception getting data from socket: %s", e)
 			elif args.station:
 				
 				try:
@@ -179,9 +173,9 @@ if __name__ == '__main__':
 								"data": Binary(datos), "n_gps": str(num_gps), "n_glo": str(num_glo), "n_gal": str(num_gal), "n_bei": str(num_bei), "timestamp": time.time(), "id_station": decod[0]}
 						},upsert=True)
 				except Exception as e:
-					print ("Exception getting data from socket: "+str(e))
-		except:
-			print ("Unexpected error: ", sys.exc_info()[1])
+					logger.error("Exception getting data from socket: %s", e)
+		except (socket.error, ConnectionError, BrokenPipeError) as e:
+			logger.error("Unexpected error: %s", e)
 			break
 	
 	

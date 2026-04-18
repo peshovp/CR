@@ -18,7 +18,7 @@ import pymongo
 from bson.binary import Binary
 import socket
 import threading
-import SocketServer
+import socketserver as SocketServer
 
 class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
     def handle(self):
@@ -49,7 +49,7 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
                 main_logger.info(self.name+" - Client sent empty data. Is the socket closed remotely?")
                 break
             
-            if data.find('SOURCE') >- 1:
+            if 'SOURCE' in data:
                 
                 rcvd = data.replace("\r\n", " ")
                 packet_splitted = str(rcvd).split(' ')
@@ -79,7 +79,7 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
                         main_logger.info(self.name+" - ERROR when manage SOURCE request: "+ str(e))
             elif mountp != "":
                 id_station, n_gps, n_glo = decodeRTCM3Packet(data)
-                print self.name+" - "+mountp+" RTCM3 packet summary ~~> ID Station:"+ str(id_station)+ " GPS:"+ str(n_gps)+ " GLO:"+ str(n_glo)
+                main_logger.info("%s - %s RTCM3 packet summary ~~> ID Station: %s GPS: %s GLO: %s", self.name, mountp, id_station, n_gps, n_glo)
                 
                 stream = streams.find_one({'mountpoint': mountp, 'id_station': id_station})
                 

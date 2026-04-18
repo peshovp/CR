@@ -1,12 +1,11 @@
 # -*- coding: UTF-8 -*-
-import sys
+import logging
+
+logger = logging.getLogger(__name__)
 
 def decodeRTCM3Packet(raw):
     PREAMBLE='d3'
-    if sys.version_info.major < 3:
-        rtcm_hex=raw.encode('hex')
-    else:
-        rtcm_hex=raw.hex()
+    rtcm_hex=raw.hex()
 
 
     msg_num_header=0
@@ -37,7 +36,7 @@ def decodeRTCM3Packet(raw):
             #print(msg_id)
             
             if msg_num_header == 1001 or msg_num_header == 1002 or msg_num_header == 1003 or msg_num_header == 1004:
-                print(msg_num_header)
+                logger.debug("RTCM message header: %s", msg_num_header)
                 indice_nsat = indice_mensaje_header + 12 + 12 + 30 + 1
                 indice_idstation = indice_mensaje_header + 12
                 id_station = int(rtcm_bin[indice_idstation:indice_idstation + 12], 2)
@@ -77,8 +76,8 @@ def decodeRTCM3Packet(raw):
                 if msg_num_header>=1121 and msg_num_header<=1127:
                     n_bei=cont_sat
 
-        except:
-            print (" EXCEPTION: The packet has not enough bits")
+        except (ValueError, IndexError) as e:
+            logger.warning("Failed to decode RTCM packet: not enough bits: %s", e)
         indice_preamble += 2
         #print('para terminar')
         #print(n_gps)

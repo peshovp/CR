@@ -174,11 +174,13 @@ apt install -y \
     libapache2-mod-php8.3 \
     php-dev php-pear
 
-if ! php -m | grep -q mongodb; then
+if php -m 2>/dev/null | grep -q mongodb; then
+    echo "PHP MongoDB extension already installed, skipping."
+else
     pecl install mongodb <<< '' || true
+    echo "extension=mongodb.so" > /etc/php/8.3/mods-available/mongodb.ini
+    phpenmod mongodb
 fi
-echo "extension=mongodb.so" > /etc/php/8.3/mods-available/mongodb.ini
-phpenmod mongodb
 
 php -m | grep -q mongodb \
     && echo -e "${GREEN}PHP MongoDB extension OK${NC}" \

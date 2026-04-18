@@ -32,5 +32,9 @@ web/vendor/
 # Data
 DATA/
 
+# Temp/backup
+*.bak
+*.tmp
+
 # AI context (do not commit)
 project_context.md

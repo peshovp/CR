@@ -179,7 +179,7 @@ php -m | grep -q mongodb \
 
 cd "$INSTALL_DIR/web"
 curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-composer install --no-dev --no-interaction
+COMPOSER_ALLOW_SUPERUSER=1 composer update --no-dev --no-interaction
 
 echo -e "${GREEN}PHP + Apache installed.${NC}"
 

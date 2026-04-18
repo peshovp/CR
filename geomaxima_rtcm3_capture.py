@@ -8,6 +8,7 @@ __description__ = "Caster Server: This script captures rtcm raw data from CORS"
 from geomaxima_config_file import *
 from geomaxima_header_printer import printCasterHeader
 from geomaxima_RTCM3_Decode import decodeRTCM3Packet
+from general_defs import getDatabase
 import time  
 import platform
 import codecs
@@ -23,14 +24,6 @@ import pymongo
 from bson.binary import Binary
 
 
-def createMongoClient():
-    maxServSelDelay = 1
-    client = pymongo.MongoClient('mongodb://'+MONGODB_AUTH_USER+':'+MONGODB_AUTH_PASSWD+'@'+MONGODB_HOST_PORT+'/geomaxima?authMechanism=SCRAM-SHA-1',
-                                         serverSelectionTimeoutMS=maxServSelDelay)
-    client.server_info() 
-    return client
-
-
 def create_rotating_log(path, address):
         logger = logging.getLogger("Process %r" %(str(address)))
         logger.setLevel(logging.INFO)
@@ -44,8 +37,7 @@ def create_rotating_log(path, address):
 def handle(connection, address):
     logger = create_rotating_log('./rtcm3_capture_processes.log',address)
     try:
-        client = createMongoClient()
-        db = client['geomaxima']
+        db = getDatabase()
         rtcm_raw = db['rtcm_raw']
         streams = db['streams']
     except Exception as e:
@@ -139,7 +131,6 @@ def handle(connection, address):
     finally:
         logger.info("Closing socket")
         connection.close()
-        client.close()
 
 class Server(object):
     def __init__(self, hostname, port, logger):

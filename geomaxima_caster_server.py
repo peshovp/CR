@@ -70,7 +70,7 @@ import pymongo
 from bson.binary import Binary
 
 from config_load import Load_config
-from general_defs import *
+from general_defs import getDatabase
 
 conf=Load_config()
 
@@ -81,10 +81,9 @@ def checkMountpointInDatabase(mountp, logger):
     logger.debug("Checking mountpoint: %s", mountp)
     try:
         logger.info("Checking for mountpoint request "+mountp+"...")
-        dbClient = createMongoClient()
-        db = dbClient[conf['PROFILE']['DATABASE']['str_db_Name']] #toma la bbdd
-        db_rtcm_raw = db[conf['PROFILE']['DATABASE']['str_db_RTCMTable']] #toma el documento de datos crudos
-        db_streams = db[conf['PROFILE']['DATABASE']['str_db_StreamsTable']] #toma el documento de los streams
+        db = getDatabase()
+        db_rtcm_raw = db[conf['PROFILE']['DATABASE']['str_db_RTCMTable']]
+        db_streams = db[conf['PROFILE']['DATABASE']['str_db_StreamsTable']]
         stream = db_streams.find_one({'mountpoint': mountp})
         logger.debug("Stream data: %s", stream)
         if stream == None:
@@ -107,7 +106,6 @@ def checkMountpointInDatabase(mountp, logger):
         logger.info("EXCEPTION searching for mountpoint in MongoDB:" + str(err))
         valid = False
     finally:
-        dbClient.close()
         return valid
 
 def checkAuth(input_token, logger):
@@ -121,7 +119,6 @@ def checkAuth(input_token, logger):
     """
     valid_auth = False
     username = None
-    dbClient = None
     try:
         # Decode Base64 Authorization header to get username:password
         token = base64.b64decode(input_token)
@@ -132,8 +129,7 @@ def checkAuth(input_token, logger):
         username = parts[0]
         password = parts[1].strip()
 
-        dbClient = createMongoClient()
-        db = dbClient[conf['PROFILE']['DATABASE']['str_db_Name']]
+        db = getDatabase()
         db_users = db[conf['PROFILE']['DATABASE']['str_db_UsersTable']]
 
         user = db_users.find_one({'username': username, 'active': True})
@@ -161,8 +157,6 @@ def checkAuth(input_token, logger):
     except Exception as e:
         logger.error(f"Error during authentication: {e}", exc_info=True)
     finally:
-        if dbClient:
-            dbClient.close()
         if valid_auth:
             return True, username
         else:
@@ -198,8 +192,7 @@ class CasterRequestHandler(HTTPServer.BaseHTTPRequestHandler):
     def do_SOURCETABLE(self):
         mountpoints = ''
         try:
-            dbClient = createMongoClient()
-            db = dbClient[conf['PROFILE']['DATABASE']['str_db_Name']]
+            db = getDatabase()
             db_rtcm_raw = db[conf['PROFILE']['DATABASE']['str_db_RTCMTable']]
             db_streams = db[conf['PROFILE']['DATABASE']['str_db_StreamsTable']]
             streams = db_streams.find()
@@ -242,7 +235,6 @@ class CasterRequestHandler(HTTPServer.BaseHTTPRequestHandler):
             self.logger_rh.info(str(self.client_address)+" - EXCEPTION searching for streams in MongoDB database:" + str(err))
         
         finally:
-            dbClient.close()
             status = "SOURCETABLE 200 OK\r\n"
             server = "Server: "+self.server_version+"\r\n"
             date = "Date: "+time.strftime("%a, %d %b %Y %H:%M:%S GMT Standar Time", time.gmtime())+"\r\n"
@@ -264,8 +256,7 @@ class CasterRequestHandler(HTTPServer.BaseHTTPRequestHandler):
             self.do_SOURCETABLE()
             return
 
-        self.dbClient = createMongoClient()
-        self.db = self.dbClient[conf['PROFILE']['DATABASE']['str_db_Name']]
+        self.db = getDatabase()
         self.db_rtcm_raw = self.db[conf['PROFILE']['DATABASE']['str_db_RTCMTable']]
         self.db_rover_conn = self.db[conf['PROFILE']['DATABASE']['str_db_RoverConnections']]
         
@@ -468,8 +459,7 @@ if __name__ == '__main__':
     
     main_logger.info("Trying to connect to MongoDB")
     try:
-        dbClient = createMongoClient()
-        db = dbClient[conf['PROFILE']['DATABASE']['str_db_Name']]
+        db = getDatabase()
         db_rover_conn = db[conf['PROFILE']['DATABASE']['str_db_RoverConnections']]
 
         for doc in db_rover_conn.find({}):
@@ -481,7 +471,6 @@ if __name__ == '__main__':
                     }
                 },upsert = False)
 
-        dbClient.close()
     except Exception as e:
         main_logger.info("Oops! MongoDB seems not to be active. Exiting..."+str(e))
         main_logger.error("Oops! MongoDB seems not to be active. Exiting..."+str(e))

@@ -4,7 +4,7 @@ import logging
 import time
 
 from config_load import Load_config
-from general_defs import *
+from general_defs import getDatabase
 
 logger = logging.getLogger(__name__)
 
@@ -56,8 +56,7 @@ def GPGGADecodeAndUpdateRover (nmea_gga, rover):
     
     distance, mountp = getNearestMountpoint(latitude, longitude)
     
-    dbClient = createMongoClient()
-    db = dbClient[conf['PROFILE']['DATABASE']['str_db_Name']]
+    db = getDatabase()
     db_rover_conn = db[conf['PROFILE']['DATABASE']['str_db_RoverConnections']]
     db_rover_conn.update_one({'_id': rover._id },{"$set": {
         'sat_used' : sat_used, 
@@ -68,7 +67,6 @@ def GPGGADecodeAndUpdateRover (nmea_gga, rover):
         'distance_near': distance,
         'ref_station': mountp,
         'nmea_msg': nmea_gga}})
-    dbClient.close()
 
     rover.sat_used = sat_used
     rover.latency = latency
@@ -96,8 +94,7 @@ def haversine(lon1, lat1, lon2, lat2):
 def getNearestMountpoint(user_lat, user_lon):
     distance_mountpoint_array = []
     try:
-        dbClient = createMongoClient()
-        db = dbClient[conf['PROFILE']['DATABASE']['str_db_Name']]
+        db = getDatabase()
         db_rtcm_raw = db[conf['PROFILE']['DATABASE']['str_db_RTCMTable']]
         db_streams = db[conf['PROFILE']['DATABASE']['str_db_StreamsTable']]
 
@@ -113,7 +110,6 @@ def getNearestMountpoint(user_lat, user_lon):
                     distance = haversine(float(user_lon),float(user_lat),lon,lat)
                     distance_mountpoint_array.append((float("{:.3f}".format(distance)), mountp))
         
-        dbClient.close()
         distance_mountpoint_array = sorted(distance_mountpoint_array, key=lambda x: x[0], reverse=False) 
         
         return distance_mountpoint_array[0]

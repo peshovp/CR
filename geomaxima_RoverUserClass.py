@@ -4,7 +4,7 @@ import logging
 import time
 from bson.objectid import ObjectId
 from config_load import Load_config
-from general_defs import *
+from general_defs import getDatabase
 
 logger = logging.getLogger(__name__)
 
@@ -49,8 +49,7 @@ class RoverUser():
         logger.debug("conn_status: %s", self.conn_status)
             
     def newUser (self):
-        dbClient = createMongoClient()
-        db = dbClient[conf['PROFILE']['DATABASE']['str_db_Name']]
+        db = getDatabase()
         db_rover_conn = db[conf['PROFILE']['DATABASE']['str_db_RoverConnections']]
         
         db_rover_conn.insert({
@@ -71,13 +70,11 @@ class RoverUser():
             'nmea_msg' : self.nmea_msg,
             'last_update' : self.last_update
             })
-        dbClient.close()
         
         
     
     def disconnectUser (self):
-        dbClient = createMongoClient()
-        db = dbClient[conf['PROFILE']['DATABASE']['str_db_Name']]
+        db = getDatabase()
         db_rover_conn = db[conf['PROFILE']['DATABASE']['str_db_RoverConnections']]
         db_rover_conn.update_one(
             {"_id": self._id}, 
@@ -86,4 +83,3 @@ class RoverUser():
                     "conn_status": False
                 }
             },upsert = False)
-        dbClient.close()

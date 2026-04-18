@@ -7,7 +7,7 @@ import platform
 import codecs
 import time
 from config_load import Load_config
-from general_defs import *
+from general_defs import getDatabase
 
 logger = logging.getLogger(__name__)
 
@@ -22,9 +22,8 @@ if __name__ == '__main__':
     printCasterHeader()
     
     try:
-        dbClient = createMongoClient()
+        db = getDatabase()
         logger.info("Connected to MongoDB")
-        db = dbClient[conf['PROFILE']['DATABASE']['str_db_Name']]
         db_users = db[conf['PROFILE']['DATABASE']['str_db_UsersTable']]
         db_streams = db[conf['PROFILE']['DATABASE']['str_db_StreamsTable']]
 
@@ -77,8 +76,6 @@ if __name__ == '__main__':
             "active" : True
         })
 
-        dbClient.close() # Close MongoDB database connection
-        
     except Exception as e:
         logger.error("MongoDB seems not to be active. Exiting: %s", e)
         sys.exit()

@@ -2,6 +2,7 @@
 from config_file import *
 from geomaxima_header_printer import printCasterHeader
 from geomaxima_RTCM3_Decode import decodeRTCM3Packet
+from general_defs import getDatabase
 import logging
 import socket
 import pymongo
@@ -23,14 +24,7 @@ num_bei=0
 
 def timestamp():
 	return datetime.datetime.fromtimestamp(time.time()).strftime('%Y-%m-%d %H:%M:%S')
-def createMongoClient():
-	maxServSelDelay = 1  
-	
-	client = pymongo.MongoClient('mongodb://'+STR_MONGODB_AUTH_USER+':'+STR_MONGODB_AUTH_PASSWD+'@'+HOST_MONGODB+':'+str(PORT_MONGODB)+'/'+str_db_Name+'?authMechanism=SCRAM-SHA-1',
-										 serverSelectionTimeoutMS=maxServSelDelay)
-	
-	client.server_info() 
-	return client
+
 if __name__ == '__main__':
 	if (platform.system() == "Windows"):
 		os.system('cls')
@@ -71,8 +65,7 @@ if __name__ == '__main__':
 			sys.exit()
 	
 	try:
-		client = createMongoClient()
-		db = client['geomaxima']  
+		db = getDatabase()
 		rtcm_raw = db['rtcm_raw']  
 		streams = db['streams']  
 	except Exception as e:
@@ -81,7 +74,6 @@ if __name__ == '__main__':
 	stream = streams.find_one({'mountpoint': mountpoint})
 	
 	if stream == None:
-		db.close()
 		sys.exit()
 	
 	s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -180,4 +172,3 @@ if __name__ == '__main__':
 	
 	
 	s.close()
-	db.close()

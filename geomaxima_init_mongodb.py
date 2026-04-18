@@ -72,7 +72,7 @@ if __name__ == '__main__':
             "fee":"N",
             "bitrate" : 9600,
             "misc" : "null antenna",
-            "encoder_pwd" : "gnss",
+            "encoder_pwd" : "CHANGE_ME",
             "active" : True
         })
 

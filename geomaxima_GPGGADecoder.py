@@ -101,7 +101,7 @@ def getNearestMountpoint(user_lat, user_lon):
         streams_data = db_streams.find({})  
         
         for stream in streams_data:
-            if stream['solution'] == False:
+            if not stream['solution']:
                 rtcm_raw_data = db_rtcm_raw.find_one({'mountpoint': stream['mountpoint']})
                 if ((time.time() - rtcm_raw_data['timestamp']) < conf['SETTINGS']['PREFERENCES']['TIME_OUT_RAWDATA']):
                     lat = float(stream['latitude'])

@@ -66,7 +66,7 @@ class ThreadedTCPRequestHandler(SocketServer.BaseRequestHandler):
                             main_logger.info(self.name+" - Mountpoint does not exist in database: ERROR - Mount Point Invalid")
                             self.request.sendall("ERROR - Mount Point Invalid\r\n")
                         
-                        elif stream['active'] == False:
+                        elif not stream['active']:
                             main_logger.info(self.name+" - Mountpoint is not active in database: ERROR - Mount Point Invalid")
                             self.request.sendall("ERROR - Mount Point Invalid\r\n")
                         

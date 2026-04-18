@@ -89,10 +89,10 @@ def checkMountpointInDatabase(mountp, logger):
         if stream == None:
             logger.info('ERROR - Mount Point Invalid - It does not exist on database')
             valid = False
-        elif stream['active'] == False:
+        elif not stream['active']:
             logger.info('ERROR - Mount Point Invalid - It is not active on database')
             valid = False
-        elif  stream['solution'] == False:
+        elif not stream['solution']:
             rtcm_raw_data = db_rtcm_raw.find_one({'mountpoint': mountp})
             if ((time.time() - rtcm_raw_data['timestamp']) > conf['SETTINGS']['PREFERENCES']['TIME_OUT_RAWDATA']):
                 logger.warning("Invalid data received")
@@ -219,7 +219,7 @@ class CasterRequestHandler(HTTPServer.BaseHTTPRequestHandler):
                     mp.append(str(st['latitude']))
                     mp.append(str(st['longitude']))
                     mp.append(str(st['nmea']))
-                    if st['solution'] == False:
+                    if not st['solution']:
                         mp.append('0')
                     else:
                         mp.append('1')
@@ -301,7 +301,7 @@ class CasterRequestHandler(HTTPServer.BaseHTTPRequestHandler):
                     ts_current = time.time()
                     elapsed = ts_current - ts_init
                     
-                    if elapsed > 5.0 and self.need_GGA == True and self.got_GGA == False:
+                    if elapsed > 5.0 and self.need_GGA and not self.got_GGA:
                         self.logger_rh.info(str(self.client_address)+" - Rover user "+str(username)+" rejected. No GPGGA message received. Access denied.")
                         self.wfile.write(bytes('No GPGGA message received. Access denied.',"utf-8"))
                         break

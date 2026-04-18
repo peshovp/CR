@@ -77,7 +77,7 @@ def handle(connection, address):
                                 logger.info('Mountpoint does not exist in database: ERROR - Mount Point Invalid')
                                 connection.sendall("ERROR - Mount Point Invalid\r\n")
 
-                            elif stream['active'] == False:
+                            elif not stream['active']:
                                 logger.info('Mountpoint is not active in database: ERROR - Mount Point Invalid')
                                 connection.sendall("ERROR - Mount Point Invalid\r\n")
 

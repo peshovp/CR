@@ -112,14 +112,19 @@ systemctl enable mongod
 
 sleep 3
 
-mongosh --quiet <<MONGOEOF
-use ${DB_NAME}
-db.createUser({
-    user: "${DB_USER}",
-    pwd: "${MONGO_PASS}",
-    roles: [{ role: "readWrite", db: "${DB_NAME}" }]
-})
-MONGOEOF
+mongosh --quiet --eval "
+try {
+    db = db.getSiblingDB('${DB_NAME}');
+    db.createUser({user: '${DB_USER}', pwd: '${MONGO_PASS}', roles: [{role: 'readWrite', db: '${DB_NAME}'}]});
+    print('User created');
+} catch(e) {
+    if (e.codeName === 'Unauthorized') {
+        print('Auth already enabled, trying with credentials...');
+    } else {
+        print('User may already exist: ' + e.message);
+    }
+}
+" || mongosh -u "${DB_USER}" -p "${MONGO_PASS}" --authenticationDatabase "${DB_NAME}" --quiet --eval "print('User already exists, auth works')" "${DB_NAME}" || true
 
 if ! grep -q "^security:" /etc/mongod.conf; then
     printf '\nsecurity:\n  authorization: enabled\n' >> /etc/mongod.conf
@@ -169,7 +174,9 @@ apt install -y \
     libapache2-mod-php8.3 \
     php-dev php-pear
 
-pecl install mongodb <<< ''
+if ! php -m | grep -q mongodb; then
+    pecl install mongodb <<< '' || true
+fi
 echo "extension=mongodb.so" > /etc/php/8.3/mods-available/mongodb.ini
 phpenmod mongodb
 
@@ -179,7 +186,7 @@ php -m | grep -q mongodb \
 
 cd "$INSTALL_DIR/web"
 curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer
-COMPOSER_ALLOW_SUPERUSER=1 composer update --no-dev --no-interaction
+COMPOSER_ALLOW_SUPERUSER=1 composer update --no-dev --no-interaction 2>&1 || true
 
 echo -e "${GREEN}PHP + Apache installed.${NC}"
 
@@ -314,7 +321,7 @@ cat > /etc/apache2/sites-available/geomaxima.conf <<APACHEEOF
 APACHEEOF
 
 a2ensite geomaxima.conf
-a2dissite 000-default.conf
+a2dissite 000-default.conf || true
 a2enmod rewrite
 
 chown -R www-data:www-data "$INSTALL_DIR/web"
@@ -331,6 +338,9 @@ echo -e "${GREEN}Apache configured.${NC}"
 # STEP 7: Create systemd Services
 # =======================================
 echo -e "${BLUE}[7/9] Creating systemd services...${NC}"
+
+systemctl stop geomaxima-caster 2>/dev/null || true
+systemctl stop geomaxima-capture 2>/dev/null || true
 
 cat > /etc/systemd/system/geomaxima-caster.service <<SVCEOF
 [Unit]
